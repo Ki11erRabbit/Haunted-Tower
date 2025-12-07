@@ -1,21 +1,22 @@
 CC = lcc
 CFLAGS = -Wa-l -Wl-m -Wl-j -DUSE_SFR_FOR_REG
-
-SRCPATH = src
 OUTPATH = output
-SOURCES = main.c
-OBJECTS = $(OUTPATH)/$(patsub %.c,%.o,$(SRCPATH)/$(SOURCES))
-TARGET = $(OUTPATH)/background.gb
+SOURCES = main.c noise.c sprites.c map.c
+OBJECTS = $(patsubst %.c,$(OUTPATH)/%.o,$(SOURCES))
+TARGET = $(OUTPATH)/hauntedtower.gb
 
-.PHONY: hauntedtower.gb
+.PHONY: all clean
 
-hauntedtower.gb: OBJECTS
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: SOURCES
-	mkdir $(OUTPATH)
-	$(CC) $(CFLAGS) -c -o $<
+$(OUTPATH)/%.o: %.c | $(OUTPATH)
+	cd $(OUTPATH) && $(CC) $(CFLAGS) -c ../$<
 
+$(OUTPATH):
+	mkdir -p $(OUTPATH)
 
-clean: OBJECTS %.gb
-	rm $^
+clean:
+	rm -rf $(OUTPATH)

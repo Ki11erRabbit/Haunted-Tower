@@ -1,0 +1,30 @@
+#ifndef MAP_H
+#define MAP_H
+
+#include <stdint.h>
+
+
+#define MAPSIZE (32 * 32)
+#define WALL_THRESHOLD 200U
+
+#define WALL_TILE 1U
+#define FLOOR_TILE 2U
+#define TRAP_TILE 3U
+#define EXIT_TILE 4U
+
+typedef enum player_direction {
+  PLAYER_UP,
+  PLAYER_DOWN,
+  PLAYER_RIGHT,
+  PLAYER_LEFT,
+} player_dir_t;
+
+
+typedef struct floor {
+    int8_t tiles[MAPSIZE];
+} floor_t;
+
+extern floor_t main_floor;
+
+void initialize_floor(floor_t *);
+#endif
