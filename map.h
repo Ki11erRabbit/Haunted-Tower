@@ -5,7 +5,7 @@
 
 
 #define MAPSIZE (32 * 32)
-#define WALL_THRESHOLD 200U
+#define WALL_THRESHOLD 230U
 
 #define WALL_TILE 1U
 #define FLOOR_TILE 2U
