@@ -98,44 +98,72 @@ void add_more_floor(floor_t *floor) {
   }
 }
 
-typedef enum direction {
-  DIRECTION_UP = 1,
-  DIRECTION_DOWN,
-  DIRECTION_LEFT,
-  DIRECTION_RIGHT
-} direction_t;
-
-direction_t select_direction(uint8_t row, uint8_t col) {
-  uint8_t direction = 0;
-  while (direction == 0) {
-    direction = rand() % 4 + 1;
-    switch (direction) {
-    case DIRECTION_UP:
-      if ((row - 1) == 0) {
-          direction = 0;
-      }
-    break;
-    case DIRECTION_DOWN:
-      if ((row + 1) == 31) {
-        direction = 0;
-      }
-      break;
-    case DIRECTION_LEFT:
-      if ((col - 1) == 0) {
-        direction = 0;
-      }
-      break;
-    case DIRECTION_RIGHT:
-      if ((col + 1) == 31) {
-        direction = 0;
-      }
-      break;
+void smooth_walls(floor_t *floor) {
+  uint8_t *tiles = (uint8_t *)floor->tiles;
+  const uint8_t *tiles_max = tiles + MAPSIZE;
+  uint8_t col = 0;
+  uint8_t row = 0;
+  for (; tiles < tiles_max; tiles++) {
+    if (row == 0 || row == 31) {
+      goto end;
+    } else if (col == 0 || col == 31) {
+      goto end;
     }
-  }
-  return direction;
+
+    if (*tiles != WALL_TILE) {
+      goto end;
+    }
+    uint8_t free_spaces = 0;
+    // Above
+    if (*(tiles - 32) == FLOOR_TILE) {
+      free_spaces++;
+    }
+    // Below
+    if (*(tiles + 32) == FLOOR_TILE) {
+      free_spaces++;
+    }
+    // Left
+    if (*(tiles - 1) == FLOOR_TILE) {
+      free_spaces++;
+    }
+    // Right
+    if (*(tiles + 1) == FLOOR_TILE) {
+      free_spaces++;
+    }
+    uint8_t free_diagonals = 0;
+    // Top Left
+    if (*(tiles - 33) == FLOOR_TILE) {
+      free_diagonals++;
+    }
+    // Bottom Right
+    if (*(tiles + 33) == FLOOR_TILE) {
+      free_diagonals++;
+    }
+    // Top Right
+    if (*(tiles - 31) == FLOOR_TILE) {
+      free_diagonals++;
+    }
+    // Bottom Left
+    if (*(tiles + 31) == FLOOR_TILE) {
+      free_diagonals++;
+    }
+
+    if (free_spaces >= 2 && free_diagonals <= 1) {
+      *tiles = FLOOR_TILE;
+    } else if (free_diagonals >= 2 && free_spaces <= 1) {
+      *tiles = FLOOR_TILE;
+    }      
+    
+  end:
+    col++;
+    if (col == 32) {
+      col = 0;
+      row++;
+    }      
+  }    
 }  
 
-void expand_small_rooms(floor_t *floor) {
+void remove_holes(floor_t *floor) {
   uint8_t *tiles = (uint8_t *)floor->tiles;
   const uint8_t *tiles_max = tiles + MAPSIZE;
   uint8_t col = 0;
@@ -150,70 +178,99 @@ void expand_small_rooms(floor_t *floor) {
     if (*tiles != FLOOR_TILE) {
       goto end;
     }
+    uint8_t neighbors = 0;
+    // Above
+    if (*(tiles - 32) != FLOOR_TILE) {
+      neighbors++;
+    }
+    // Below
+    if (*(tiles + 32) != FLOOR_TILE) {
+      neighbors++;
+    }
+    // Left
+    if (*(tiles - 1) != FLOOR_TILE) {
+      neighbors++;
+    }
+    // Right
+    if (*(tiles + 1) != FLOOR_TILE) {
+      neighbors++;
+    }
 
-    /*
-      Bitflag field
-      starting from 1st bit
-      None Above 0
-      None Below 1
-      None Left  2
-      None Right 3
-     */
-    uint8_t around_flags = 0xf;
-    if ((row - 1) != 0 && *(tiles - 32) == FLOOR_TILE) {
-      around_flags ^= 0x1;
-    }
-    if ((row + 1) != 31 && *(tiles + 32) == FLOOR_TILE) {
-      around_flags ^= 0x2;
-    }
-    if ((col - 1) != 0 && *(tiles - 1) == FLOOR_TILE) {
-      around_flags ^= 0x4;
+    if (neighbors >= 3) {
+      *tiles = WALL_TILE;
     }      
-    if ((col + 1) != 31 && *(tiles + 1) == FLOOR_TILE) {
-      around_flags ^= 0x8;
-    }
+    
+  end:
+    col++;
+    if (col == 32) {
+      col = 0;
+      row++;
+    }      
+  }    
+}
 
-    if (around_flags == 0) {
+void wall_liveness(floor_t *floor) {
+  uint8_t *tiles = (uint8_t *)floor->tiles;
+  const uint8_t *tiles_max = tiles + MAPSIZE;
+  uint8_t col = 0;
+  uint8_t row = 0;
+  for (; tiles < tiles_max; tiles++) {
+    if (row == 0 || row == 31) {
+      goto end;
+    } else if (col == 0 || col == 31) {
+      goto end;
+    }
+    uint8_t is_floor = 0;
+    uint8_t is_wall = 0;
+    if (*tiles == FLOOR_TILE) {
+      is_floor = 1;
+    } else if (*tiles == WALL_TILE) {
+      is_wall = 1;
+    } else {
       goto end;
     }      
+    uint8_t side_neighbors = 0;
+    // Above
+    if (*(tiles - 32) == WALL_TILE) {
+      side_neighbors++;
+    }
+    // Below
+    if (*(tiles + 32) == WALL_TILE) {
+      side_neighbors++;
+    }
+    // Left
+    if (*(tiles - 1) == WALL_TILE) {
+      side_neighbors++;
+    }
+    // Right
+    if (*(tiles + 1) == WALL_TILE) {
+      side_neighbors++;
+    }
+    uint8_t diagonal_neighbors = 0;
+    // Top Left
+    if (*(tiles - 33) == WALL_TILE) {
+      diagonal_neighbors++;
+    }
+    // Bottom Right
+    if (*(tiles + 33) == WALL_TILE) {
+      diagonal_neighbors++;
+    }
+    // Top Right
+    if (*(tiles - 31) == WALL_TILE) {
+      diagonal_neighbors++;
+    }
+    // Bottom Left
+    if (*(tiles + 31) == WALL_TILE) {
+      diagonal_neighbors++;
+    }
 
-    uint8_t offset = 0;
-    /*if (around_flags % 2 != 0) {
-      offset = 1;
-      }*/
+    uint8_t total_neighbors = side_neighbors + diagonal_neighbors;
 
-    uint8_t extra_tiles = around_flags;
-    uint8_t max_path = around_flags % 4;
-    /*for (;extra_tiles != 0; extra_tiles--) {
-      direction_t direction = select_direction(row, col);
-      uint8_t *temp_tiles = tiles;
-      uint8_t temp_row = row;
-      uint8_t temp_col = col;
-      for (uint8_t path = max_path; path != 0; path--, extra_tiles--) {
-        switch (direction) {
-        case DIRECTION_UP:
-          temp_row -= 1;
-          temp_tiles -= 32;
-          break;
-        case DIRECTION_DOWN:
-          temp_row += 1;
-          temp_tiles += 32;
-          break;
-        case DIRECTION_LEFT:
-          temp_col -= 1;
-          temp_tiles -= 1;
-          break;
-        case DIRECTION_RIGHT:
-          temp_col += 1;
-          temp_tiles += 1;
-          break;
-        }
-
-        *temp_tiles = FLOOR_TILE;
-        direction = select_direction(temp_row, temp_col);
-      }
-
-      } */     
+    if (is_floor && total_neighbors == 3 && side_neighbors >= 2) {
+      *tiles = WALL_TILE;
+    } else if (is_wall && (total_neighbors <= 2 || (side_neighbors <= 2 && diagonal_neighbors > 3))) {
+      *tiles = FLOOR_TILE;
+    }      
     
   end:
     col++;
@@ -226,8 +283,14 @@ void expand_small_rooms(floor_t *floor) {
 
 void generate_floor() {
   initialize_floor(&main_floor);
+  wall_liveness(&main_floor);
   put_in_more_walls(&main_floor);
   add_more_floor(&main_floor);
+  smooth_walls(&main_floor);
+  remove_holes(&main_floor);
+  wall_liveness(&main_floor);
+  //put_in_more_walls(&main_floor);
+  //smooth_walls(&main_floor);
   //expand_small_rooms(&main_floor);
 }
 
