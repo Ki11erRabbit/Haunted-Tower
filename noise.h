@@ -3,6 +3,7 @@
 #define NOISE_H
 
 #include <stdint.h>
+#include <rand.h>
 
 #define NOISE_SIZE 1024U
 
@@ -40,6 +41,15 @@ const uint8_t *get_voronoi_noise(uint8_t selector) {
   case 3:
     return voronoi_noise3;
   }
+}
+
+const uint8_t *get_random_noise(uint8_t selector) {
+  switch (rand() % 2) {
+  case 0:
+    return get_perlin_noise(selector);
+  case 1:
+    return get_voronoi_noise(selector);
+  }    
 }  
 
 #endif

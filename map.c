@@ -15,7 +15,7 @@ floor_t main_floor;
 
 void initialize_floor(floor_t *floor) {
   uint8_t value = rand();
-  const uint8_t *noise_map1 = get_voronoi_noise(value);
+  const uint8_t *noise_map1 = get_random_noise(value);
   value = rand();
   //const uint8_t *noise_map2 = get_perlin_noise(value);
   const uint8_t threshold = WALL_THRESHOLD - (rand() % 20);
