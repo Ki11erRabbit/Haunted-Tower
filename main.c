@@ -8,7 +8,6 @@
 
 
 void main() {
-  cpu_fast();
   initrand(DIV_REG + LY_REG);
   DISPLAY_OFF;
 
