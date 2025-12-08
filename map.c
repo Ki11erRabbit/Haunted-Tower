@@ -15,22 +15,22 @@ floor_t main_floor;
 
 void initialize_floor(floor_t *floor) {
   uint8_t value = rand();
-  const uint8_t *noise_map1 = get_perlin_noise(value);
+  const uint8_t *noise_map1 = get_voronoi_noise(value);
   value = rand();
-  const uint8_t *noise_map2 = get_perlin_noise(value);
-  const uint8_t threshold = WALL_THRESHOLD + (rand() % 20);
+  //const uint8_t *noise_map2 = get_perlin_noise(value);
+  const uint8_t threshold = WALL_THRESHOLD - (rand() % 20);
   const uint8_t *noise1_end = noise_map1 + NOISE_SIZE;
-  const uint8_t *noise2_end = noise_map2 + NOISE_SIZE;
+  //const uint8_t *noise2_end = noise_map2 + NOISE_SIZE;
   uint8_t *tiles = (uint8_t*)floor->tiles;
   uint8_t col = 0;
   uint8_t row = 0;
-  for (; noise_map1 < noise1_end; noise_map1++, noise_map2++, tiles++) {
+  for (; noise_map1 < noise1_end; noise_map1++, tiles++) {
     if (row == 0 || row == 31) {
       *tiles = WALL_TILE;
     } else if (col == 0 || col == 31) {
       *tiles = WALL_TILE;
     } else {
-      if ((*noise_map1 + *noise_map2) >= WALL_THRESHOLD) {
+      if ((*noise_map1) >= WALL_THRESHOLD) {
         *tiles = WALL_TILE;
       } else {
         *tiles = FLOOR_TILE;
@@ -46,8 +46,8 @@ void initialize_floor(floor_t *floor) {
 
 void put_in_more_walls(floor_t *floor) {
   uint8_t value = rand();
-  const uint8_t *noise_map = get_voronoi_noise(value);
-  const uint8_t threshold = WALL_THRESHOLD - (rand() % 20);
+  const uint8_t *noise_map = get_perlin_noise(value);
+  const uint8_t threshold = WALL_THRESHOLD - (rand() % 40);
   const uint8_t *noise_end = noise_map + NOISE_SIZE;
   uint8_t *tiles = (uint8_t*)floor->tiles;
   uint8_t col = 0;
@@ -58,7 +58,7 @@ void put_in_more_walls(floor_t *floor) {
     } else if (col == 0 || col == 31) {
       goto end;
     } else {
-      if (*noise_map >= threshold) {
+      if (*noise_map <= threshold) {
         *tiles = WALL_TILE;
       }
     }
@@ -73,22 +73,19 @@ void put_in_more_walls(floor_t *floor) {
 
 void add_more_floor(floor_t *floor) {
   uint8_t value = rand();
-  const uint8_t *noise_map1 = get_perlin_noise(value);
-  value = rand();
-  const uint8_t *noise_map2 = get_perlin_noise(value);
-  const uint8_t threshold = WALL_THRESHOLD + (rand() % 20);
-  const uint8_t *noise1_end = noise_map1 + NOISE_SIZE;
-  const uint8_t *noise2_end = noise_map2 + NOISE_SIZE;
+  const uint8_t *noise_map = get_voronoi_noise(value);
+  const uint8_t threshold = FLOOR_THRESHOLD + (rand() % 20);
+  const uint8_t *noise_end = noise_map + NOISE_SIZE;
   uint8_t *tiles = (uint8_t*)floor->tiles;
   uint8_t col = 0;
   uint8_t row = 0;
-  for (; noise_map1 < noise1_end; noise_map1++, noise_map2++, tiles++) {
+  for (; noise_map < noise_end; noise_map++, tiles++) {
     if (row == 0 || row == 31) {
       goto end;
     } else if (col == 0 || col == 31) {
       goto end;
     } else {
-      if ((*noise_map1 + *noise_map2) >= threshold) {
+      if (*noise_map <= threshold) {
         *tiles = FLOOR_TILE;
       }
     }
@@ -229,8 +226,8 @@ void expand_small_rooms(floor_t *floor) {
 
 void generate_floor() {
   initialize_floor(&main_floor);
-  add_more_floor(&main_floor);
   put_in_more_walls(&main_floor);
+  add_more_floor(&main_floor);
   //expand_small_rooms(&main_floor);
 }
 
