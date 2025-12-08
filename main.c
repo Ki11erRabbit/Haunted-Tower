@@ -8,10 +8,24 @@
 
 
 void main() {
-  waitpad(J_A);
+  cpu_fast();
   initrand(DIV_REG + LY_REG);
   DISPLAY_OFF;
+
+
+  BCPS_REG = 0x80;  // Auto-increment, palette 0, color 0
+  BCPD_REG = 0xFF;  // White - low byte
+  BCPD_REG = 0x7F;  // White - high byte
+  BCPD_REG = 0x94;  // Light gray - low byte
+  BCPD_REG = 0x52;  // Light gray - high byte
+  BCPD_REG = 0x4A;  // Dark gray - low byte
+  BCPD_REG = 0x29;  // Dark gray - high byte
+  BCPD_REG = 0x00;  // Black - low byte
+  BCPD_REG = 0x00;  // Black - high byte
+
+
   set_bkg_data(0, 5, basespritesTiles);
+ 
   generate_floor();
   draw_floor();
   SHOW_BKG;
@@ -46,8 +60,10 @@ void main() {
       }
       break;
     case J_A:
+      DISPLAY_OFF;
       generate_floor();
       draw_floor();
+      DISPLAY_ON;
       break;
     }
     

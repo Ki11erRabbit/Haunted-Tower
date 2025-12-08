@@ -1,5 +1,5 @@
 CC = lcc
-CFLAGS = -Wa-l -Wl-m -Wl-j -DUSE_SFR_FOR_REG
+CFLAGS = -Wa-l -Wl-m -Wl-j -Wm-yC -DUSE_SFR_FOR_REG
 OUTPATH = output
 SOURCES = main.c noise.c sprites.c map.c
 OBJECTS = $(patsubst %.c,$(OUTPATH)/%.o,$(SOURCES))
