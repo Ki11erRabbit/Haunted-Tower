@@ -219,7 +219,7 @@ void remove_holes(floor_t *floor) {
     if (*(tiles + 1) != FLOOR_TILE) {
       neighbors++;
     }
-    uint8_t diagonal_neighbors;
+    uint8_t diagonal_neighbors = 0;
     // Top Left
     if (*(tiles - 33) != FLOOR_TILE) {
       diagonal_neighbors++;
@@ -241,7 +241,7 @@ void remove_holes(floor_t *floor) {
       neighbors++;
     }
 
-    if (neighbors >= 4 && diagonal_neighbors <= 5) {
+    if (neighbors >= 5 && diagonal_neighbors <= 2) {
       *tiles = WALL_TILE;
     }      
     
@@ -330,7 +330,7 @@ void wall_liveness(floor_t *floor) {
   }    
 }  
 
-void generate_floor() {
+void generate_floor(void) {
   cpu_fast();
   initialize_floor(&main_floor);
   wall_liveness(&main_floor);
@@ -344,7 +344,7 @@ void generate_floor() {
   cpu_slow();
 }
 
-void draw_floor() {
+void draw_floor(void) {
   set_bkg_tiles(0, 0, 32, 32, (uint8_t*)main_floor.tiles);
   wait_vbl_done();
 }  

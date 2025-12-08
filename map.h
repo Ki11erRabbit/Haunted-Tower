@@ -30,10 +30,10 @@ extern floor_t main_floor;
 /*
  * This function generates a new dungeon floor.
  */
-void generate_floor();
+void generate_floor(void);
 /*
  * This function sends the generated dungeon floor to the vram.
  */
-void draw_floor();
+void draw_floor(void);
 
 #endif
