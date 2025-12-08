@@ -12,15 +12,17 @@
 floor_t main_floor;
 
 
-
+/*
+ * This function creates the initial layout of a floor.
+ * We randomly select either perlin or voronoi noise for this.
+ * If the noise value is >= WALL_THRESHOLD, then it is a wall,
+ * otherwise it is a floor tile.
+ */
 void initialize_floor(floor_t *floor) {
   uint8_t value = rand();
   const uint8_t *noise_map1 = get_random_noise(value);
   value = rand();
-  //const uint8_t *noise_map2 = get_perlin_noise(value);
-  const uint8_t threshold = WALL_THRESHOLD - (rand() % 20);
   const uint8_t *noise1_end = noise_map1 + NOISE_SIZE;
-  //const uint8_t *noise2_end = noise_map2 + NOISE_SIZE;
   uint8_t *tiles = (uint8_t*)floor->tiles;
   uint8_t col = 0;
   uint8_t row = 0;
@@ -30,7 +32,7 @@ void initialize_floor(floor_t *floor) {
     } else if (col == 0 || col == 31) {
       *tiles = WALL_TILE;
     } else {
-      if ((*noise_map1) >= WALL_THRESHOLD) {
+      if (*noise_map1 >= WALL_THRESHOLD) {
         *tiles = WALL_TILE;
       } else {
         *tiles = FLOOR_TILE;
@@ -44,6 +46,12 @@ void initialize_floor(floor_t *floor) {
   }
 }
 
+/*
+ * This function uses perlin noise to try to add more walls to a floor.
+ * We offset the WALL_THRESHOLD a little to add more randomness.
+ * Then, if the value at the position in the noisemap is <= threshold
+ * then we set that tile to a wall.
+ */
 void put_in_more_walls(floor_t *floor) {
   uint8_t value = rand();
   const uint8_t *noise_map = get_perlin_noise(value);
@@ -69,8 +77,13 @@ void put_in_more_walls(floor_t *floor) {
       row++;
     }      
   }
-}  
+}
 
+/*
+ * This function uses voronoi noise to try to expand the amount of flooring.
+ * We offset the FLOOR_THRESHOLD with a number 0..20 to add more randomness.
+ * Then if the noise any position is <= threshold, then it is made into a floor tile.
+ */
 void add_more_floor(floor_t *floor) {
   uint8_t value = rand();
   const uint8_t *noise_map = get_voronoi_noise(value);
@@ -98,6 +111,10 @@ void add_more_floor(floor_t *floor) {
   }
 }
 
+/*
+ * This function's goal is to remove random floating walls.
+ * It checks for the amount of free spaces around a wall tile.
+ */
 void smooth_walls(floor_t *floor) {
   uint8_t *tiles = (uint8_t *)floor->tiles;
   const uint8_t *tiles_max = tiles + MAPSIZE;
@@ -161,8 +178,15 @@ void smooth_walls(floor_t *floor) {
       row++;
     }      
   }    
-}  
+}
 
+
+/*
+ * This function's goal is to try to remove open spaces that
+ * are completely surrounded by walls that may make actor placement harder.
+ * It checks around floor tiles.
+ * It doesn't work very well but not sure how to improve it.
+ */
 void remove_holes(floor_t *floor) {
   uint8_t *tiles = (uint8_t *)floor->tiles;
   const uint8_t *tiles_max = tiles + MAPSIZE;
@@ -230,6 +254,10 @@ void remove_holes(floor_t *floor) {
   }    
 }
 
+/*
+ * This Pass applies a celluar automaton check to tiles.
+ * This is so that jagged edges and individual walls get cleaned up.
+ */
 void wall_liveness(floor_t *floor) {
   uint8_t *tiles = (uint8_t *)floor->tiles;
   const uint8_t *tiles_max = tiles + MAPSIZE;

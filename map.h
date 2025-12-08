@@ -27,7 +27,13 @@ typedef struct floor {
 
 extern floor_t main_floor;
 
+/*
+ * This function generates a new dungeon floor.
+ */
 void generate_floor();
+/*
+ * This function sends the generated dungeon floor to the vram.
+ */
 void draw_floor();
 
 #endif
