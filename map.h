@@ -6,6 +6,7 @@
 
 #define MAPSIZE (32 * 32)
 #define WALL_THRESHOLD 230U
+#define FLOOR_THRESHOLD 170U
 
 #define WALL_TILE 1U
 #define FLOOR_TILE 2U
@@ -26,5 +27,7 @@ typedef struct floor {
 
 extern floor_t main_floor;
 
-void initialize_floor(floor_t *);
+void generate_floor();
+void draw_floor();
+
 #endif
