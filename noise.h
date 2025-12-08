@@ -11,10 +11,16 @@ extern const uint8_t perlin_noise0[];
 extern const uint8_t perlin_noise1[];
 extern const uint8_t perlin_noise2[];
 extern const uint8_t perlin_noise3[];
+extern const uint8_t perlin_noise4[];
+extern const uint8_t perlin_noise5[];
+extern const uint8_t perlin_noise6[];
 extern const uint8_t voronoi_noise0[];
 extern const uint8_t voronoi_noise1[];
 extern const uint8_t voronoi_noise2[];
 extern const uint8_t voronoi_noise3[];
+extern const uint8_t voronoi_noise4[];
+extern const uint8_t voronoi_noise5[];
+extern const uint8_t voronoi_noise6[];
 
 const uint8_t *get_perlin_noise(uint8_t selector) {
   switch (selector % 4) {
@@ -26,6 +32,12 @@ const uint8_t *get_perlin_noise(uint8_t selector) {
     return perlin_noise2;
   case 3:
     return perlin_noise3;
+  case 4:
+    return perlin_noise4;
+  case 5:
+    return perlin_noise5;
+  case 6:
+    return perlin_noise6;
   }
 }
 
@@ -40,6 +52,12 @@ const uint8_t *get_voronoi_noise(uint8_t selector) {
     return voronoi_noise2;
   case 3:
     return voronoi_noise3;
+  case 4:
+    return voronoi_noise4;
+  case 5:
+    return voronoi_noise5;
+  case 6:
+    return voronoi_noise6;
   }
 }
 

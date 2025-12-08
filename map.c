@@ -20,7 +20,7 @@ floor_t main_floor;
  */
 void initialize_floor(floor_t *floor) {
   uint8_t value = rand();
-  const uint8_t *noise_map1 = get_random_noise(value);
+  const uint8_t *noise_map1 = get_voronoi_noise(value);
   value = rand();
   const uint8_t *noise1_end = noise_map1 + NOISE_SIZE;
   uint8_t *tiles = (uint8_t*)floor->tiles;
@@ -335,7 +335,7 @@ void generate_floor(void) {
   initialize_floor(&main_floor);
   wall_liveness(&main_floor);
   put_in_more_walls(&main_floor);
-  add_more_floor(&main_floor);
+  //add_more_floor(&main_floor);
   smooth_walls(&main_floor);
   remove_holes(&main_floor);
   wall_liveness(&main_floor);

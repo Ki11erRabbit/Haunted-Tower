@@ -5,9 +5,7 @@
 #include "map.h"
 #include "sprites.h"
 
-
-
-void main() {
+void main(void) {
   initrand(DIV_REG + LY_REG);
   DISPLAY_OFF;
 
@@ -20,8 +18,7 @@ void main() {
   SHOW_BKG;
   DISPLAY_ON;
   wait_vbl_done();
-  uint8_t x = 0 , y = 0;
-  
+  uint8_t x = 0, y = 0;
   for (;;) {
 
     uint8_t joy = joypad();
