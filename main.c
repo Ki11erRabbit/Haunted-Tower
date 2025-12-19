@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "map.h"
 #include "sprites.h"
+#include "camera.h"
 
 void main(void) {
   initrand(DIV_REG + LY_REG);
@@ -11,10 +12,11 @@ void main(void) {
 
   set_default_palette();
 
-  set_bkg_data(0, 5, basespritesTiles);
+  set_bkg_data(0, 18, BackgroundTiles);
  
   generate_floor();
-  draw_floor();
+  // draw_floor();
+  initial_draw();
   SHOW_BKG;
   DISPLAY_ON;
   wait_vbl_done();
@@ -24,36 +26,34 @@ void main(void) {
     uint8_t joy = joypad();
     switch (joy) {
     case J_UP:
-      if (y != 0) {
-        y--;
-      }        
+        if (camera.y > 0) {
+            camera.y--;
+        }
       break;
     case J_DOWN:
-      y++;
-      if (y >= 15) {
-        y = 14;
-      }        
+        if (camera.y < MAP_SIDE - (TILE_HEIGHT >> 1)) {
+            camera.y++;
+        }
       break;
     case J_LEFT:
-      if (x != 0) {
-        x--;
-      }        
+        if (camera.x > 0) {
+            camera.x--;
+        }
       break;
     case J_RIGHT:
-      x++;
-      if (x >= 13) {
-        x = 12;
-      }
+        if (camera.x < MAP_SIDE - (TILE_WIDTH >> 1)) {
+            camera.x++;
+        }
       break;
     case J_A:
       DISPLAY_OFF;
       generate_floor();
-      draw_floor();
+      initial_draw();
       DISPLAY_ON;
       break;
     }
-    
-    move_bkg(x * 8, y * 8);
+
+    update_map_display();
     vsync();
   }    
 }  

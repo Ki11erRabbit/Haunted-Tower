@@ -3,11 +3,13 @@
 
 #include <stdint.h>
 
+#define MAP_SIDE 32
 
-#define MAPSIZE (32 * 32)
+#define MAPSIZE (MAP_SIDE * MAP_SIDE)
 #define WALL_THRESHOLD 43U
 #define FLOOR_THRESHOLD 2U
 
+#define VOID_TILE 0U
 #define WALL_TILE 1U
 #define FLOOR_TILE 2U
 #define TRAP_TILE 3U

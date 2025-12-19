@@ -1,7 +1,7 @@
 CC = lcc
 CFLAGS = -Wa-l -Wl-m -Wl-j -Wm-yC -DUSE_SFR_FOR_REG
 OUTPATH = output
-SOURCES = main.c noise.c sprites.c map.c
+SOURCES = main.c noise.c sprites.c map.c camera.c
 OBJECTS = $(patsubst %.c,$(OUTPATH)/%.o,$(SOURCES))
 TARGET = $(OUTPATH)/hauntedtower.gb
 
