@@ -165,7 +165,44 @@ void draw_map_row(uint8_t screen_y, uint16_t map_pixel_x, uint16_t map_pixel_y) 
 
 
 void initial_draw(void) { 
-    draw_visible_map(camera.x, camera.y); 
+    uint8_t screen_x, screen_y;
+    uint8_t grid_x, grid_y;
+    uint8_t tile_type;
+    uint8_t sprite_tile;
+    uint8_t quadrant;
+    
+    // Calculate the starting map pixel position
+    uint16_t start_pixel_x = camera.pixel_x;
+    uint16_t start_pixel_y = camera.pixel_y;
+    
+    // Draw enough tiles to fill the 32x32 background buffer
+    // This ensures we have tiles ready when scrolling begins
+    for (screen_y = 0; screen_y < 32; screen_y++) {
+        for (screen_x = 0; screen_x < 32; screen_x++) {
+            // Calculate actual map position in pixels
+            uint16_t map_pixel_x = start_pixel_x + (screen_x << 3);
+            uint16_t map_pixel_y = start_pixel_y + (screen_y << 3);
+            
+            // Convert to grid coordinates (divide by 16)
+            grid_x = map_pixel_x >> 4;
+            grid_y = map_pixel_y >> 4;
+            
+            // Get the tile type from the grid
+            tile_type = get_map_tile(grid_x, grid_y);
+            
+            // Determine which quadrant within the 16x16 grid cell
+            uint8_t sub_x = (map_pixel_x >> 3) & 1;
+            uint8_t sub_y = (map_pixel_y >> 3) & 1;
+            quadrant = (sub_y << 1) | sub_x;
+            
+            // Get the appropriate sprite tile
+            sprite_tile = get_background_tile(tile_type, quadrant);
+            
+            // Set the background tile
+            set_bkg_tile_xy(screen_x, screen_y, sprite_tile);
+        }
+    }
+    
     // Set initial scroll position
     SCX_REG = camera.pixel_x;
     SCY_REG = camera.pixel_y;
@@ -210,11 +247,20 @@ void scroll_camera(int8_t delta_x, int8_t delta_y) {
 }
 
 void update_map_display(void) {
+    static uint8_t first_call = 1;
     static uint16_t last_scroll_x = 0;
     static uint16_t last_scroll_y = 0;
     
     uint16_t scroll_x = camera.pixel_x;
     uint16_t scroll_y = camera.pixel_y;
+    
+    // On first call, initialize last_scroll values to current position
+    if (first_call) {
+        last_scroll_x = scroll_x;
+        last_scroll_y = scroll_y;
+        first_call = 0;
+        return;  // Don't process any scrolling on first call
+    }
     
     // Calculate which 8x8 tile positions we're at
     uint16_t tile_x = scroll_x >> 3;
