@@ -3,6 +3,6 @@
 
 
 extern unsigned char basespritesTiles[];
-
+extern unsigned char BackgroundTiles[];
 
 #endif

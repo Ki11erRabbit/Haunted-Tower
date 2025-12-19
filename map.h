@@ -22,7 +22,7 @@ typedef enum player_direction {
 
 
 typedef struct floor {
-    int8_t tiles[MAPSIZE];
+    uint8_t tiles[MAPSIZE];
 } floor_t;
 
 extern floor_t main_floor;
