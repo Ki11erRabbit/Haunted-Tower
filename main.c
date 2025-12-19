@@ -24,27 +24,21 @@ void main(void) {
   for (;;) {
 
     uint8_t joy = joypad();
+    int8_t delta_x = 0;
+    int8_t delta_y = 0;
     switch (joy) {
     case J_UP:
-        if (camera.y > 0) {
-            camera.y--;
-        }
-      break;
+        delta_y = -1;
+        break;
     case J_DOWN:
-        if (camera.y < MAP_SIDE - (TILE_HEIGHT >> 1)) {
-            camera.y++;
-        }
-      break;
+        delta_y = 1;
+        break;
     case J_LEFT:
-        if (camera.x > 0) {
-            camera.x--;
-        }
-      break;
+        delta_x = -1;
+        break;
     case J_RIGHT:
-        if (camera.x < MAP_SIDE - (TILE_WIDTH >> 1)) {
-            camera.x++;
-        }
-      break;
+        delta_x = 1;
+        break;
     case J_A:
       DISPLAY_OFF;
       generate_floor();
@@ -52,7 +46,7 @@ void main(void) {
       DISPLAY_ON;
       break;
     }
-
+    scroll_camera(delta_x, delta_y);
     update_map_display();
     vsync();
   }    

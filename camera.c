@@ -93,41 +93,72 @@ void draw_visible_map(uint8_t camera_grid_x, uint8_t camera_grid_y) {
 }
 
 
-void draw_map_column(uint8_t screen_x, uint8_t camera_grid_x, uint8_t camera_grid_y) {
+void draw_map_column(uint8_t screen_x, uint16_t map_pixel_x, uint16_t map_pixel_y) {
     uint8_t screen_y;
-    uint8_t grid_x, grid_y;
     uint8_t tile_type;
     uint8_t sprite_tile;
     uint8_t quadrant;
     
-    for (screen_y = 0; screen_y < TILE_HEIGHT; screen_y++) {
-        grid_x = camera_grid_x + (screen_x >> 1);
-        grid_y = camera_grid_y + (screen_y >> 1);
+    // For each tile in the column (need to draw extra tiles for full coverage)
+    // Drawing 19 tiles to ensure we cover the visible area plus buffer
+    for (screen_y = 0; screen_y < TILE_HEIGHT + 1; screen_y++) {
+        // Calculate the actual map position in pixels for this screen tile
+        uint16_t actual_pixel_x = map_pixel_x;
+        uint16_t actual_pixel_y = map_pixel_y + (screen_y << 3);  // screen_y * 8
         
+        // Convert to grid coordinates (divide by 16)
+        uint8_t grid_x = actual_pixel_x >> 4;
+        uint8_t grid_y = actual_pixel_y >> 4;
+        
+        // Get the tile type from the grid
         tile_type = get_map_tile(grid_x, grid_y);
-        quadrant = ((screen_y & 1) << 1) | (screen_x & 1);
+        
+        // Determine which quadrant within the 16x16 grid cell
+        // Based on the pixel position within the cell
+        uint8_t sub_x = (actual_pixel_x >> 3) & 1;  // Which 8x8 tile horizontally (0 or 1)
+        uint8_t sub_y = (actual_pixel_y >> 3) & 1;  // Which 8x8 tile vertically (0 or 1)
+        quadrant = (sub_y << 1) | sub_x;
+        
+        // Get the appropriate sprite tile
         sprite_tile = get_background_tile(tile_type, quadrant);
         
-        set_bkg_tile_xy(screen_x, screen_y, sprite_tile);
+        // Set the background tile at the wrapped screen position
+        uint8_t wrapped_y = screen_y & 0x1F;  // Wrap at 32
+        set_bkg_tile_xy(screen_x, wrapped_y, sprite_tile);
     }
 }
 
-void draw_map_row(uint8_t screen_y, uint8_t camera_grid_x, uint8_t camera_grid_y) {
+void draw_map_row(uint8_t screen_y, uint16_t map_pixel_x, uint16_t map_pixel_y) {
     uint8_t screen_x;
-    uint8_t grid_x, grid_y;
     uint8_t tile_type;
     uint8_t sprite_tile;
     uint8_t quadrant;
     
-    for (screen_x = 0; screen_x < TILE_WIDTH; screen_x++) {
-        grid_x = camera_grid_x + (screen_x >> 1);
-        grid_y = camera_grid_y + (screen_y >> 1);
+    // For each tile in the row (need to draw extra tiles for full coverage)
+    // Drawing 21 tiles to ensure we cover the visible area plus buffer
+    for (screen_x = 0; screen_x < TILE_WIDTH + 1; screen_x++) {
+        // Calculate the actual map position in pixels for this screen tile
+        uint16_t actual_pixel_x = map_pixel_x + (screen_x << 3);  // screen_x * 8
+        uint16_t actual_pixel_y = map_pixel_y;
         
+        // Convert to grid coordinates (divide by 16)
+        uint8_t grid_x = actual_pixel_x >> 4;
+        uint8_t grid_y = actual_pixel_y >> 4;
+        
+        // Get the tile type from the grid
         tile_type = get_map_tile(grid_x, grid_y);
-        quadrant = ((screen_y & 1) << 1) | (screen_x & 1);
+        
+        // Determine which quadrant within the 16x16 grid cell
+        uint8_t sub_x = (actual_pixel_x >> 3) & 1;
+        uint8_t sub_y = (actual_pixel_y >> 3) & 1;
+        quadrant = (sub_y << 1) | sub_x;
+        
+        // Get the appropriate sprite tile
         sprite_tile = get_background_tile(tile_type, quadrant);
         
-        set_bkg_tile_xy(screen_x, screen_y, sprite_tile);
+        // Set the background tile at the wrapped screen position
+        uint8_t wrapped_x = screen_x & 0x1F;  // Wrap at 32
+        set_bkg_tile_xy(wrapped_x, screen_y, sprite_tile);
     }
 }
 
@@ -135,13 +166,179 @@ void draw_map_row(uint8_t screen_y, uint8_t camera_grid_x, uint8_t camera_grid_y
 
 void initial_draw(void) { 
     draw_visible_map(camera.x, camera.y); 
+    // Set initial scroll position
+    SCX_REG = camera.pixel_x;
+    SCY_REG = camera.pixel_y;
+}
+
+// Scroll the camera by a given number of pixels in each direction
+// Positive values scroll right/down, negative values scroll left/up
+// Automatically clamps to map boundaries
+void scroll_camera(int8_t delta_x, int8_t delta_y) {
+    int16_t new_x, new_y;
+    
+    // Calculate max scroll positions
+    // Map is 32 nodes * 16 pixels = 512 pixels total
+    const uint16_t MAX_SCROLL_X = (32 * 16) - 160;  // 352
+    const uint16_t MAX_SCROLL_Y = (32 * 16) - 144;  // 368
+    
+    // Handle horizontal scrolling
+    if (delta_x != 0) {
+        new_x = (int16_t)camera.pixel_x + delta_x;
+        
+        if (new_x < 0) {
+            camera.pixel_x = 0;
+        } else if (new_x > MAX_SCROLL_X) {
+            camera.pixel_x = MAX_SCROLL_X;
+        } else {
+            camera.pixel_x = (uint16_t)new_x;
+        }
+    }
+    
+    // Handle vertical scrolling
+    if (delta_y != 0) {
+        new_y = (int16_t)camera.pixel_y + delta_y;
+        
+        if (new_y < 0) {
+            camera.pixel_y = 0;
+        } else if (new_y > MAX_SCROLL_Y) {
+            camera.pixel_y = MAX_SCROLL_Y;
+        } else {
+            camera.pixel_y = (uint16_t)new_y;
+        }
+    }
 }
 
 void update_map_display(void) {
-    // Just redraw everything if camera moved
-    if (camera.x != camera.x_prev || camera.y != camera.y_prev) {
-        draw_visible_map(camera.x, camera.y);
-        camera.x_prev = camera.x;
-        camera.y_prev = camera.y;
+    static uint16_t last_scroll_x = 0;
+    static uint16_t last_scroll_y = 0;
+    
+    uint16_t scroll_x = camera.pixel_x;
+    uint16_t scroll_y = camera.pixel_y;
+    
+    // Calculate which 8x8 tile positions we're at
+    uint16_t tile_x = scroll_x >> 3;
+    uint16_t tile_y = scroll_y >> 3;
+    uint16_t last_tile_x = last_scroll_x >> 3;
+    uint16_t last_tile_y = last_scroll_y >> 3;
+    
+    // Handle horizontal scrolling
+    if (tile_x != last_tile_x) {
+        if (scroll_x > last_scroll_x) {
+            // Scrolling right - need to draw columns
+            uint16_t cols_to_draw = tile_x - last_tile_x;
+            for (uint16_t i = 0; i < cols_to_draw; i++) {
+                uint16_t draw_tile_x = last_tile_x + 1 + i;
+                uint16_t map_pixel_x = (draw_tile_x << 3) + 160;  // 20 tiles ahead
+                uint8_t screen_col = (uint8_t)((draw_tile_x + 20) & 0x1F);
+                
+                // Draw the entire column at this position
+                for (uint8_t row = 0; row < 19; row++) {
+                    uint16_t map_pixel_y = scroll_y + (row << 3);
+                    uint8_t screen_row = (uint8_t)((scroll_y >> 3) + row) & 0x1F;
+                    
+                    uint8_t grid_x = map_pixel_x >> 4;
+                    uint8_t grid_y = map_pixel_y >> 4;
+                    uint8_t tile_type = get_map_tile(grid_x, grid_y);
+                    
+                    uint8_t sub_x = (map_pixel_x >> 3) & 1;
+                    uint8_t sub_y = (map_pixel_y >> 3) & 1;
+                    uint8_t quadrant = (sub_y << 1) | sub_x;
+                    uint8_t sprite_tile = get_background_tile(tile_type, quadrant);
+                    
+                    set_bkg_tile_xy(screen_col, screen_row, sprite_tile);
+                }
+            }
+        } else {
+            // Scrolling left - need to draw columns
+            uint16_t cols_to_draw = last_tile_x - tile_x;
+            for (uint16_t i = 0; i < cols_to_draw; i++) {
+                uint16_t draw_tile_x = tile_x + i;
+                uint16_t map_pixel_x = draw_tile_x << 3;
+                uint8_t screen_col = (uint8_t)(draw_tile_x & 0x1F);
+                
+                // Draw the entire column at this position
+                for (uint8_t row = 0; row < 19; row++) {
+                    uint16_t map_pixel_y = scroll_y + (row << 3);
+                    uint8_t screen_row = (uint8_t)((scroll_y >> 3) + row) & 0x1F;
+                    
+                    uint8_t grid_x = map_pixel_x >> 4;
+                    uint8_t grid_y = map_pixel_y >> 4;
+                    uint8_t tile_type = get_map_tile(grid_x, grid_y);
+                    
+                    uint8_t sub_x = (map_pixel_x >> 3) & 1;
+                    uint8_t sub_y = (map_pixel_y >> 3) & 1;
+                    uint8_t quadrant = (sub_y << 1) | sub_x;
+                    uint8_t sprite_tile = get_background_tile(tile_type, quadrant);
+                    
+                    set_bkg_tile_xy(screen_col, screen_row, sprite_tile);
+                }
+            }
+        }
+        last_scroll_x = scroll_x;
     }
+    
+    // Handle vertical scrolling
+    if (tile_y != last_tile_y) {
+        if (scroll_y > last_scroll_y) {
+            // Scrolling down - need to draw rows
+            uint16_t rows_to_draw = tile_y - last_tile_y;
+            for (uint16_t i = 0; i < rows_to_draw; i++) {
+                uint16_t draw_tile_y = last_tile_y + 1 + i;
+                uint16_t map_pixel_y = (draw_tile_y << 3) + 144;  // 18 tiles ahead
+                uint8_t screen_row = (uint8_t)((draw_tile_y + 18) & 0x1F);
+                
+                // Draw the entire row at this position
+                for (uint8_t col = 0; col < 21; col++) {
+                    uint16_t map_pixel_x = scroll_x + (col << 3);
+                    uint8_t screen_col = (uint8_t)((scroll_x >> 3) + col) & 0x1F;
+                    
+                    uint8_t grid_x = map_pixel_x >> 4;
+                    uint8_t grid_y = map_pixel_y >> 4;
+                    uint8_t tile_type = get_map_tile(grid_x, grid_y);
+                    
+                    uint8_t sub_x = (map_pixel_x >> 3) & 1;
+                    uint8_t sub_y = (map_pixel_y >> 3) & 1;
+                    uint8_t quadrant = (sub_y << 1) | sub_x;
+                    uint8_t sprite_tile = get_background_tile(tile_type, quadrant);
+                    
+                    set_bkg_tile_xy(screen_col, screen_row, sprite_tile);
+                }
+            }
+        } else {
+            // Scrolling up - need to draw rows
+            uint16_t rows_to_draw = last_tile_y - tile_y;
+            for (uint16_t i = 0; i < rows_to_draw; i++) {
+                uint16_t draw_tile_y = tile_y + i;
+                uint16_t map_pixel_y = draw_tile_y << 3;
+                uint8_t screen_row = (uint8_t)(draw_tile_y & 0x1F);
+                
+                // Draw the entire row at this position
+                for (uint8_t col = 0; col < 21; col++) {
+                    uint16_t map_pixel_x = scroll_x + (col << 3);
+                    uint8_t screen_col = (uint8_t)((scroll_x >> 3) + col) & 0x1F;
+                    
+                    uint8_t grid_x = map_pixel_x >> 4;
+                    uint8_t grid_y = map_pixel_y >> 4;
+                    uint8_t tile_type = get_map_tile(grid_x, grid_y);
+                    
+                    uint8_t sub_x = (map_pixel_x >> 3) & 1;
+                    uint8_t sub_y = (map_pixel_y >> 3) & 1;
+                    uint8_t quadrant = (sub_y << 1) | sub_x;
+                    uint8_t sprite_tile = get_background_tile(tile_type, quadrant);
+                    
+                    set_bkg_tile_xy(screen_col, screen_row, sprite_tile);
+                }
+            }
+        }
+        last_scroll_y = scroll_y;
+    }
+    
+    // Update grid tracking
+    camera.x = scroll_x >> 4;
+    camera.y = scroll_y >> 4;
+    
+    // Update hardware scroll registers for smooth scrolling
+    SCX_REG = (uint8_t)(scroll_x & 0xFF);
+    SCY_REG = (uint8_t)(scroll_y & 0xFF);
 }
