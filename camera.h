@@ -51,4 +51,13 @@ void draw_map_row(uint8_t screen_y, uint16_t map_pixel_x, uint16_t map_pixel_y);
 void initial_draw(void);
 void scroll_camera(int8_t delta_x, int8_t delta_y);
 void update_map_display(void);
+// Set camera to specific pixel coordinates (0-352 for x, 0-368 for y)
+void set_camera_position(uint16_t pixel_x, uint16_t pixel_y);
+
+// Set camera to specific grid coordinates (0-31 for x and y)
+// Each grid cell is 16x16 pixels
+void set_camera_grid_position(uint8_t grid_x, uint8_t grid_y);
+
+// Reset the camera state (call before initial_draw when changing levels)
+void reset_camera_state(void);
 #endif

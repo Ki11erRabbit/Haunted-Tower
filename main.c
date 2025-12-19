@@ -42,6 +42,7 @@ void main(void) {
     case J_A:
       DISPLAY_OFF;
       generate_floor();
+      reset_camera_state();
       initial_draw();
       DISPLAY_ON;
       break;

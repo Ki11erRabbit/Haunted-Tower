@@ -246,8 +246,50 @@ void scroll_camera(int8_t delta_x, int8_t delta_y) {
     }
 }
 
+
+static uint8_t first_call = 1;
+
+void reset_camera_state(void) {
+    first_call = 0;
+}  
+
+
+// Set camera to specific pixel coordinates
+// This will clamp to valid map boundaries and redraw the visible area
+void set_camera_position(uint16_t pixel_x, uint16_t pixel_y) {
+    // Calculate max scroll positions
+    const uint16_t MAX_SCROLL_X = (32 * 16) - 160;  // 352
+    const uint16_t MAX_SCROLL_Y = (32 * 16) - 144;  // 368
+    
+    // Clamp to valid range
+    if (pixel_x > MAX_SCROLL_X) {
+        pixel_x = MAX_SCROLL_X;
+    }
+    if (pixel_y > MAX_SCROLL_Y) {
+        pixel_y = MAX_SCROLL_Y;
+    }
+    
+    // Update camera position
+    camera.pixel_x = pixel_x;
+    camera.pixel_y = pixel_y;
+    camera.x = pixel_x >> 4;  // Convert to grid coordinates
+    camera.y = pixel_y >> 4;
+    
+    // Reset the scrolling system and redraw
+    reset_camera_state();
+    initial_draw();
+}
+
+// Set camera to specific grid coordinates (each grid cell is 16x16 pixels)
+void set_camera_grid_position(uint8_t grid_x, uint8_t grid_y) {
+    // Convert grid coordinates to pixel coordinates
+    uint16_t pixel_x = (uint16_t)grid_x << 4;  // grid_x * 16
+    uint16_t pixel_y = (uint16_t)grid_y << 4;  // grid_y * 16
+    
+    set_camera_position(pixel_x, pixel_y);
+}
+
 void update_map_display(void) {
-    static uint8_t first_call = 1;
     static uint16_t last_scroll_x = 0;
     static uint16_t last_scroll_y = 0;
     
