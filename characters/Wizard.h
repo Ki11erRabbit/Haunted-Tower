@@ -7,11 +7,11 @@
 #include <gbdk/metasprites.h>
 
 #define Wizard_TILE_ORIGIN 0
-#define Wizard_TILE_W 16
+#define Wizard_TILE_W 8
 #define Wizard_TILE_H 16
 #define Wizard_WIDTH 16
 #define Wizard_HEIGHT 16
-#define Wizard_TILE_COUNT 36
+#define Wizard_TILE_COUNT 34
 #define Wizard_PALETTE_COUNT 1
 #define Wizard_COLORS_PER_PALETTE 4
 #define Wizard_TOTAL_COLORS 4
@@ -19,6 +19,6 @@
 BANKREF_EXTERN(Wizard)
 
 extern const palette_color_t Wizard_palettes[4];
-extern const uint8_t Wizard_tiles[576];
+extern const uint8_t Wizard_tiles[544];
 
 #endif

@@ -22,7 +22,8 @@ $(OUTPATH)/characters/%.o: characters/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 characters/%.c: assets/%.png
-	png2asset $< -c $@ -sw 16 -sh 16 -spr16x16msx -tiles_only
+	mkdir -p characters
+	png2asset $< -c $@ -sw 16 -sh 16 -tiles_only
 
 $(OUTPATH):
 	mkdir -p $(OUTPATH)/characters
