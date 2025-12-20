@@ -1,6 +1,7 @@
-#include "camera.h"
 #include <gb/gb.h>
+#include "camera.h"
 #include "map.h"
+#include "character.h"
 
 camera_t camera = { 0 };
 
@@ -430,3 +431,22 @@ void update_map_display(void) {
     SCX_REG = (uint8_t)(scroll_x & 0xFF);
     SCY_REG = (uint8_t)(scroll_y & 0xFF);
 }
+
+
+void draw_sprite(char_state_t *character) {
+    
+    if (!(character->x >= camera.x && character->x <= (camera.x + TILE_WIDTH))) {
+        return;
+    }    
+    if (!(character->y >= camera.y && character->y <= (camera.y + TILE_HEIGHT))) {
+        return;
+    }
+
+    uint16_t pixel_x = character->x * 16;
+    uint16_t pixel_y = character->y * 16;
+
+    move_sprite(character->body[0], pixel_x, pixel_y);
+    move_sprite(character->body[1], pixel_x + 8, pixel_y);
+    move_sprite(character->body[2], pixel_x, pixel_y + 8);
+    move_sprite(character->body[3], pixel_x + 8, pixel_y + 8);
+}  

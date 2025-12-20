@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include <stdint.h>
+#include "character.h"
 
 #define BACK_CLEAR 0u
 #define BACK_WALL_UL 1u
@@ -60,4 +61,7 @@ void set_camera_grid_position(uint8_t grid_x, uint8_t grid_y);
 
 // Reset the camera state (call before initial_draw when changing levels)
 void reset_camera_state(void);
+
+void draw_sprite(char_state_t*);
+
 #endif

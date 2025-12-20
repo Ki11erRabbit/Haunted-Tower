@@ -5,6 +5,7 @@
 #include "map.h"
 #include "sprites.h"
 #include "camera.h"
+#include "character.h"
 
 void main(void) {
   initrand(DIV_REG + LY_REG);
@@ -18,6 +19,11 @@ void main(void) {
   // draw_floor();
   initial_draw();
   SHOW_BKG;
+
+  init_player();
+  draw_sprite(&player.state);
+  SHOW_SPRITES;
+  
   DISPLAY_ON;
   wait_vbl_done();
   uint8_t x = 0, y = 0;

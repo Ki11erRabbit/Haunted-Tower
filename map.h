@@ -15,14 +15,6 @@
 #define TRAP_TILE 3U
 #define EXIT_TILE 4U
 
-typedef enum player_direction {
-  PLAYER_UP,
-  PLAYER_DOWN,
-  PLAYER_RIGHT,
-  PLAYER_LEFT,
-} player_dir_t;
-
-
 typedef struct floor {
     uint8_t tiles[MAPSIZE];
 } floor_t;

@@ -1,7 +1,7 @@
 CC = lcc
 CFLAGS = -Wa-l -Wl-m -Wl-j -Wm-yC -DUSE_SFR_FOR_REG
 OUTPATH = output
-SOURCES = main.c noise.c sprites.c map.c camera.c
+SOURCES = main.c noise.c sprites.c map.c camera.c character.c
 CHARACTER_PNGS = $(wildcard assets/*.png)
 CHARACTERS = $(patsubst assets/%.png,characters/%.c,$(CHARACTER_PNGS))
 CHARACTER_OBJECTS = $(patsubst characters/%.c,$(OUTPATH)/characters/%.o,$(CHARACTERS))
@@ -23,7 +23,7 @@ $(OUTPATH)/characters/%.o: characters/%.c
 
 characters/%.c: assets/%.png
 	mkdir -p characters
-	png2asset $< -c $@ -sw 16 -sh 16 -tiles_only
+	png2asset $< -c $@ -sw 8 -sh 8 -tiles_only
 
 $(OUTPATH):
 	mkdir -p $(OUTPATH)/characters
