@@ -2,6 +2,8 @@
 #define MAP_H
 
 #include <stdint.h>
+#include <gbdk/platform.h>
+#include <gbdk/metasprites.h>
 
 #define MAP_SIDE 32
 
@@ -20,6 +22,20 @@ typedef struct floor {
 } floor_t;
 
 extern floor_t main_floor;
+
+
+extern const palette_color_t floor_red[4];
+extern const palette_color_t floor_green[4];
+extern const palette_color_t floor_blue[4];
+extern const palette_color_t floor_grey[4];
+extern const palette_color_t floor_purple[4];
+
+/*
+ * Selects from one of the 5 floor color pallets
+ */
+const palette_color_t *select_floor_color(uint8_t);
+void random_floor_color(void);
+
 
 /*
  * This function generates a new dungeon floor.

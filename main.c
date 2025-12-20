@@ -12,6 +12,7 @@ void main(void) {
   DISPLAY_OFF;
 
   set_default_palette();
+  random_floor_color();
 
   set_bkg_data(0, 18, BackgroundTiles);
  
@@ -48,6 +49,7 @@ void main(void) {
     case J_A:
       DISPLAY_OFF;
       generate_floor();
+      random_floor_color();
       reset_camera_state();
       initial_draw();
       DISPLAY_ON;

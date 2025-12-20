@@ -12,6 +12,44 @@
 floor_t main_floor;
 
 
+const palette_color_t floor_red[4] = {
+    RGB8(255, 255, 255), RGB8(255, 88, 86), RGB8(255, 3, 41), RGB8(100, 26, 24),
+};    
+const palette_color_t floor_green[4] = {
+    RGB8(255, 255, 255), RGB8(152, 255, 149), RGB8(40, 255, 56), RGB8(20, 91, 20),
+};    
+const palette_color_t floor_blue[4] = {
+    RGB8(255, 255, 255), RGB8(118, 119, 255), RGB8(40, 45, 255), RGB8(19, 21, 122),
+};    
+const palette_color_t floor_grey[4] = {
+    RGB8(255, 255, 255), RGB8(200, 200, 200), RGB8(117, 117, 117), RGB8(24, 24, 24),
+};    
+const palette_color_t floor_purple[4] = {
+    RGB8(255, 255, 255), RGB8(195, 159, 255), RGB8(146, 83, 245), RGB8(82, 51, 143),
+};
+
+const palette_color_t *select_floor_color(uint8_t selector) {
+  switch (selector % 5) {
+  case 0:
+      return floor_red;
+  case 1:
+      return floor_green;
+  case 2:
+      return floor_blue;
+  case 3:
+      return floor_grey;
+  case 4:
+      return floor_purple;
+  }
+  return 0;
+}
+
+void random_floor_color(void) {
+    uint8_t value = rand();
+    const palette_color_t *pallet = select_floor_color(value);
+    set_bkg_palette(0, 1, pallet);
+}  
+
 /*
  * This function creates the initial layout of a floor.
  * We randomly select either perlin or voronoi noise for this.
@@ -344,7 +382,7 @@ void generate_floor(void) {
   cpu_slow();
 }
 
-void draw_floor(void) {
+/*void draw_floor(void) {
   set_bkg_tiles(0, 0, 32, 32, (uint8_t*)main_floor.tiles);
   wait_vbl_done();
-}  
+  }  */
