@@ -394,4 +394,5 @@ void init_player(void) {
     player.state.sprite_movement_offset[2] = 4;
     change_player_color(3);
     set_player_color();
+    draw_sprite(&player.state);
 }  

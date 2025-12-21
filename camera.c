@@ -434,7 +434,7 @@ void update_map_display(void) {
 
 
 void draw_sprite(char_state_t *character) {
-    
+    wait_vbl_done();
     if (!(character->x >= camera.x && character->x <= (camera.x + TILE_WIDTH))) {
         return;
     }    
