@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 #include <stdint.h>
+#include <gbdk/platform.h>
+#include <gbdk/metasprites.h>
 
 typedef enum character_direction {
     CHAR_UP,
@@ -19,6 +21,9 @@ typedef struct character_state {
 
 typedef struct player_character {
     char_state_t state;
+    uint8_t color;
+    uint8_t skin_tone;
+    const palette_color_t *palette;
 } player_t;
 
 typedef struct monster_character {
@@ -53,5 +58,15 @@ void set_char_tiles(char_state_t *state, uint8_t *tiles);
 
 void init_player(void);
 
+
+void change_skin_tone(player_t *, uint8_t);
+void change_player_color(player_t *, uint8_t);
+void set_player_color(player_t *);
+
+#define NEXT_PLAYER_COLOR(player) change_player_color(&player, player.color + 1)
+#define PREV_PLAYER_COLOR(player) change_player_color(&player, player.color - 1)
+
+#define NEXT_PLAYER_SKIN_COLOR(player) change_skin_tone(&player, player.skin_tone + 1)
+#define PREV_PLAYER_SKIN_COLOR(player) change_skin_tone(&player, player.skin_tone - 1)
 
 #endif
