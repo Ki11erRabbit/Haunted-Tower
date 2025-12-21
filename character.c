@@ -346,10 +346,10 @@ void tick_character_for_movement(char_state_t *state) {
         if (state->movement_ticks == 0) {
             // If ticks is 0, then update the frame of the character
             state->movement_frame = (state->movement_frame + 1) % MOVEMENT_OFFSET;
-            state->body[0] = state->sprite_movement_offset[state->movement_frame];
-            state->body[1] = state->sprite_movement_offset[state->movement_frame] + 2;
-            state->body[2] = state->sprite_movement_offset[state->movement_frame] + 1;
-            state->body[3] = state->sprite_movement_offset[state->movement_frame] + 3;
+            state->body[0] = state->sprite_index_offset + state->sprite_movement_offset[state->movement_frame];
+            state->body[1] = state->sprite_index_offset +state->sprite_movement_offset[state->movement_frame] + 2;
+            state->body[2] = state->sprite_index_offset +state->sprite_movement_offset[state->movement_frame] + 1;
+            state->body[3] = state->sprite_index_offset +state->sprite_movement_offset[state->movement_frame] + 3;
             state->movement_ticks = MOVEMENT_TICKS;
             draw_sprite(state);
         }          
@@ -376,7 +376,7 @@ void init_player(void) {
     player.state.x = 4;
     player.state.y = 4;
     player.state.tiles = (uint8_t *)Wizard_tiles;
-    set_sprite_data(0, 60, player.state.tiles);
+    set_sprite_data(0, 36, player.state.tiles);
     set_sprite_tile(0, 0);
     set_sprite_tile(1, 1);
     set_sprite_tile(2, 2);
