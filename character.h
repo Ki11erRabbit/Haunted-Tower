@@ -33,6 +33,7 @@ typedef struct character_state {
     uint8_t body[4];
     const palette_color_t *palette;
     uint8_t sprite_movement_offset[MOVEMENT_OFFSET];
+    uint8_t sprite_index_offset;
 } char_state_t;
 
 typedef struct player_character {
@@ -65,6 +66,7 @@ extern char_t *characters[5];
 extern player_t player;
 
 
+void tick_characters_for_movement(void);
 
 void change_char_direction(char_state_t *state, uint8_t direction); 
 

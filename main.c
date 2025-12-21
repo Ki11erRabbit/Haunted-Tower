@@ -22,14 +22,13 @@ void main(void) {
   SHOW_BKG;
 
   init_player();
-  draw_sprite(&player.state);
-  SHOW_SPRITES;
   
   DISPLAY_ON;
   wait_vbl_done();
   uint8_t x = 0, y = 0;
   for (;;) {
-
+    void tick_characters_for_movement();
+    SHOW_SPRITES;
     uint8_t joy = joypad();
     int8_t delta_x = 0;
     int8_t delta_y = 0;

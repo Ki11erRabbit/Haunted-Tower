@@ -2,6 +2,7 @@
 #include <gbdk/metasprites.h>
 #include "character.h"
 #include "characters/Wizard.h"
+#include "camera.h"
 
 enum player_color {
     PLAYER_RED,
@@ -350,6 +351,7 @@ void tick_character_for_movement(char_state_t *state) {
             state->body[2] = state->sprite_movement_offset[state->movement_frame] + 1;
             state->body[3] = state->sprite_movement_offset[state->movement_frame] + 3;
             state->movement_ticks = MOVEMENT_TICKS;
+            draw_sprite(state);
         }          
         break;
     case CHAR_TURNING:
@@ -359,7 +361,11 @@ void tick_character_for_movement(char_state_t *state) {
 
 void tick_characters_for_movement(void) {
     tick_character_for_movement(&player.state);
-    for (char_t *character = (char_t*)characters; character < character + 5; character++) {
+    for (char_t *character = (char_t *)characters; character < character + 5;
+         character++) {
+        if (character == 0) {
+            continue;
+        }        
         tick_character_for_movement(&character->state);
     }      
 }
@@ -375,10 +381,17 @@ void init_player(void) {
     set_sprite_tile(1, 1);
     set_sprite_tile(2, 2);
     set_sprite_tile(3, 3);
+    player.state.sprite_index_offset = 0;
     player.state.body[0] = 0;
     player.state.body[1] = 2;
     player.state.body[2] = 1;
     player.state.body[3] = 3;
+    player.state.movement = CHAR_MOVING;
+    player.state.movement_ticks = MOVEMENT_TICKS;
+    player.state.direction = CHAR_DOWN;
+    player.state.sprite_movement_offset[0] = 0;
+    player.state.sprite_movement_offset[1] = 8;
+    player.state.sprite_movement_offset[2] = 4;
     change_player_color(3);
     set_player_color();
 }  
