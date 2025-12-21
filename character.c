@@ -157,78 +157,78 @@ void change_skin_tone(uint8_t value) {
     case PLAYER_RED:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_red_white;
+            player.state.palette = player_red_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_red_black;
+            player.state.palette = player_red_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_red_tan;
+            player.state.palette = player_red_tan;
             break;
         }        
         break;
     case PLAYER_GREEN:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_green_white;
+            player.state.palette = player_green_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_green_black;
+            player.state.palette = player_green_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_green_tan;
+            player.state.palette = player_green_tan;
             break;
         }        
         break;
     case PLAYER_BLUE:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_blue_white;
+            player.state.palette = player_blue_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_blue_black;
+            player.state.palette = player_blue_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_blue_tan;
+            player.state.palette = player_blue_tan;
             break;
         }        
         break;
     case PLAYER_PURPLE:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_purple_white;
+            player.state.palette = player_purple_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_purple_black;
+            player.state.palette = player_purple_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_purple_tan;
+            player.state.palette = player_purple_tan;
             break;
         }        
         break;
     case PLAYER_WHITE:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_white_white;
+            player.state.palette = player_white_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_white_black;
+            player.state.palette = player_white_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_white_tan;
+            player.state.palette = player_white_tan;
             break;
         }        
         break;
     case PLAYER_ORANGE:
         switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player.palette = player_orange_white;
+            player.state.palette = player_orange_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player.palette = player_orange_black;
+            player.state.palette = player_orange_black;
             break;
         case PLAYER_SKIN_TAN:
-            player.palette = player_orange_tan;
+            player.state.palette = player_orange_tan;
             break;
         }        
         break;
@@ -242,66 +242,66 @@ void change_player_color(uint8_t value) {
     case PLAYER_SKIN_WHITE:
         switch (player.color) {
         case PLAYER_RED:
-            player.palette = player_red_white;
+            player.state.palette = player_red_white;
             break;
         case PLAYER_GREEN:
-            player.palette = player_green_white;
+            player.state.palette = player_green_white;
             break;
         case PLAYER_BLUE:
-            player.palette = player_blue_white;
+            player.state.palette = player_blue_white;
             break;
         case PLAYER_PURPLE:
-            player.palette = player_purple_white;
+            player.state.palette = player_purple_white;
             break;
         case PLAYER_WHITE:
-            player.palette = player_white_white;
+            player.state.palette = player_white_white;
             break;
         case PLAYER_ORANGE:
-            player.palette = player_orange_white;
+            player.state.palette = player_orange_white;
             break;
         }        
         break;
     case PLAYER_SKIN_BLACK:
         switch (player.color) {
         case PLAYER_RED:
-            player.palette = player_red_black;
+            player.state.palette = player_red_black;
             break;
         case PLAYER_GREEN:
-            player.palette = player_green_black;
+            player.state.palette = player_green_black;
             break;
         case PLAYER_BLUE:
-            player.palette = player_blue_black;
+            player.state.palette = player_blue_black;
             break;
         case PLAYER_PURPLE:
-            player.palette = player_purple_black;
+            player.state.palette = player_purple_black;
             break;
         case PLAYER_WHITE:
-            player.palette = player_white_black;
+            player.state.palette = player_white_black;
             break;
         case PLAYER_ORANGE:
-            player.palette = player_orange_black;
+            player.state.palette = player_orange_black;
             break;
         }        
         break;
     case PLAYER_SKIN_TAN:
         switch (player.color) {
         case PLAYER_RED:
-            player.palette = player_red_tan;
+            player.state.palette = player_red_tan;
             break;
         case PLAYER_GREEN:
-            player.palette = player_green_tan;
+            player.state.palette = player_green_tan;
             break;
         case PLAYER_BLUE:
-            player.palette = player_blue_tan;
+            player.state.palette = player_blue_tan;
             break;
         case PLAYER_PURPLE:
-            player.palette = player_purple_tan;
+            player.state.palette = player_purple_tan;
             break;
         case PLAYER_WHITE:
-            player.palette = player_white_tan;
+            player.state.palette = player_white_tan;
             break;
         case PLAYER_ORANGE:
-            player.palette = player_orange_tan;
+            player.state.palette = player_orange_tan;
             break;
         }        
         break;
@@ -309,7 +309,7 @@ void change_player_color(uint8_t value) {
 }
 
 void set_player_color() {
-    set_sprite_palette(0, 1, player.palette);
+    set_sprite_palette(0, 1, player.state.palette);
 }  
 
 monster_t monsters[5];
@@ -332,6 +332,38 @@ void change_char_position(char_state_t *state, uint8_t x, uint8_t y) {
 void set_char_tiles(char_state_t *state, uint8_t *tiles) {
     state->tiles = tiles;
 }
+
+void tick_character_for_movement(char_state_t *state) {
+    switch (state->movement) {
+    case CHAR_STANDING:
+        // If we are standing, simply reset movement ticks
+        state->movement_ticks = MOVEMENT_TICKS;
+        break;
+    case CHAR_MOVING:
+        // If we are moving, reduce ticks by one
+        --state->movement_ticks;
+        if (state->movement_ticks == 0) {
+            // If ticks is 0, then update the frame of the character
+            state->movement_frame = (state->movement_frame + 1) % MOVEMENT_OFFSET;
+            state->body[0] = state->sprite_movement_offset[state->movement_frame];
+            state->body[1] = state->sprite_movement_offset[state->movement_frame] + 2;
+            state->body[2] = state->sprite_movement_offset[state->movement_frame] + 1;
+            state->body[3] = state->sprite_movement_offset[state->movement_frame] + 3;
+            state->movement_ticks = MOVEMENT_TICKS;
+        }          
+        break;
+    case CHAR_TURNING:
+        break;
+    }      
+}  
+
+void tick_characters_for_movement(void) {
+    tick_character_for_movement(&player.state);
+    for (char_t *character = (char_t*)characters; character < character + 5; character++) {
+        tick_character_for_movement(&character->state);
+    }      
+}
+
 
 void init_player(void) {
     player.state.direction = CHAR_DOWN;

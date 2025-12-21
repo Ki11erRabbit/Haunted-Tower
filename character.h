@@ -4,6 +4,9 @@
 #include <gbdk/platform.h>
 #include <gbdk/metasprites.h>
 
+#define MOVEMENT_TICKS 200
+#define MOVEMENT_OFFSET 3
+
 typedef enum character_direction {
     CHAR_UP,
     CHAR_DOWN,
@@ -11,30 +14,43 @@ typedef enum character_direction {
     CHAR_LEFT,
 } char_dir_t;
 
+typedef enum character_movement_state {
+    CHAR_MOVING,
+    CHAR_STANDING,
+    CHAR_TURNING,
+} char_move_state_t;  
+
 typedef struct character_state {
     uint8_t x;
     uint8_t y;
+    uint16_t x_pixel;
+    uint16_t y_pixel;
     uint8_t direction;
+    uint8_t movement;
+    uint8_t movement_ticks;
+    uint8_t movement_frame;
     uint8_t *tiles;
     uint8_t body[4];
+    const palette_color_t *palette;
+    uint8_t sprite_movement_offset[MOVEMENT_OFFSET];
 } char_state_t;
 
 typedef struct player_character {
     char_state_t state;
     uint8_t color;
     uint8_t skin_tone;
-    const palette_color_t *palette;
 } player_t;
 
 typedef struct monster_character {
-    char_state_t state;
+    uint8_t thing;
 } monster_t;
 
 typedef struct entity_character {
-    char_state_t state;
+    uint8_t thing;
 } entity_t;
 
 typedef struct character {
+    char_state_t state;
     uint8_t tag;
     union {
         monster_t monster;
