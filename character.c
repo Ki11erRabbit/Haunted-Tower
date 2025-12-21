@@ -150,166 +150,166 @@ const palette_color_t player_orange_tan[4] = {
     RGB(0, 0, 0),
 };
 
-void change_skin_tone(player_t *player, uint8_t value) {
+void change_skin_tone(uint8_t value) {
     value = value % 3;
-    player->skin_tone = value;
-    switch (player->color) {
+    player.skin_tone = value;
+    switch (player.color) {
     case PLAYER_RED:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_red_white;
+            player.palette = player_red_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_red_black;
+            player.palette = player_red_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_red_tan;
+            player.palette = player_red_tan;
             break;
         }        
         break;
     case PLAYER_GREEN:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_green_white;
+            player.palette = player_green_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_green_black;
+            player.palette = player_green_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_green_tan;
+            player.palette = player_green_tan;
             break;
         }        
         break;
     case PLAYER_BLUE:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_blue_white;
+            player.palette = player_blue_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_blue_black;
+            player.palette = player_blue_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_blue_tan;
+            player.palette = player_blue_tan;
             break;
         }        
         break;
     case PLAYER_PURPLE:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_purple_white;
+            player.palette = player_purple_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_purple_black;
+            player.palette = player_purple_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_purple_tan;
+            player.palette = player_purple_tan;
             break;
         }        
         break;
     case PLAYER_WHITE:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_white_white;
+            player.palette = player_white_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_white_black;
+            player.palette = player_white_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_white_tan;
+            player.palette = player_white_tan;
             break;
         }        
         break;
     case PLAYER_ORANGE:
-        switch (player->skin_tone) {
+        switch (player.skin_tone) {
         case PLAYER_SKIN_WHITE:
-            player->palette = player_orange_white;
+            player.palette = player_orange_white;
             break;
         case PLAYER_SKIN_BLACK:
-            player->palette = player_orange_black;
+            player.palette = player_orange_black;
             break;
         case PLAYER_SKIN_TAN:
-            player->palette = player_orange_tan;
+            player.palette = player_orange_tan;
             break;
         }        
         break;
     }    
 }
 
-void change_player_color(player_t *player, uint8_t value) {
+void change_player_color(uint8_t value) {
     value = value % 6;
-    player->color = value;
-    switch (player->skin_tone) {
+    player.color = value;
+    switch (player.skin_tone) {
     case PLAYER_SKIN_WHITE:
-        switch (player->color) {
+        switch (player.color) {
         case PLAYER_RED:
-            player->palette = player_red_white;
+            player.palette = player_red_white;
             break;
         case PLAYER_GREEN:
-            player->palette = player_green_white;
+            player.palette = player_green_white;
             break;
         case PLAYER_BLUE:
-            player->palette = player_blue_white;
+            player.palette = player_blue_white;
             break;
         case PLAYER_PURPLE:
-            player->palette = player_purple_white;
+            player.palette = player_purple_white;
             break;
         case PLAYER_WHITE:
-            player->palette = player_white_white;
+            player.palette = player_white_white;
             break;
         case PLAYER_ORANGE:
-            player->palette = player_orange_white;
+            player.palette = player_orange_white;
             break;
         }        
         break;
     case PLAYER_SKIN_BLACK:
-        switch (player->color) {
+        switch (player.color) {
         case PLAYER_RED:
-            player->palette = player_red_black;
+            player.palette = player_red_black;
             break;
         case PLAYER_GREEN:
-            player->palette = player_green_black;
+            player.palette = player_green_black;
             break;
         case PLAYER_BLUE:
-            player->palette = player_blue_black;
+            player.palette = player_blue_black;
             break;
         case PLAYER_PURPLE:
-            player->palette = player_purple_black;
+            player.palette = player_purple_black;
             break;
         case PLAYER_WHITE:
-            player->palette = player_white_black;
+            player.palette = player_white_black;
             break;
         case PLAYER_ORANGE:
-            player->palette = player_orange_black;
+            player.palette = player_orange_black;
             break;
         }        
         break;
     case PLAYER_SKIN_TAN:
-        switch (player->color) {
+        switch (player.color) {
         case PLAYER_RED:
-            player->palette = player_red_tan;
+            player.palette = player_red_tan;
             break;
         case PLAYER_GREEN:
-            player->palette = player_green_tan;
+            player.palette = player_green_tan;
             break;
         case PLAYER_BLUE:
-            player->palette = player_blue_tan;
+            player.palette = player_blue_tan;
             break;
         case PLAYER_PURPLE:
-            player->palette = player_purple_tan;
+            player.palette = player_purple_tan;
             break;
         case PLAYER_WHITE:
-            player->palette = player_white_tan;
+            player.palette = player_white_tan;
             break;
         case PLAYER_ORANGE:
-            player->palette = player_orange_tan;
+            player.palette = player_orange_tan;
             break;
         }        
         break;
     }
 }
 
-void set_player_color(player_t *player) {
-    set_sprite_palette(0, 1, player->palette);
+void set_player_color() {
+    set_sprite_palette(0, 1, player.palette);
 }  
 
 monster_t monsters[5];
@@ -347,6 +347,6 @@ void init_player(void) {
     player.state.body[1] = 2;
     player.state.body[2] = 1;
     player.state.body[3] = 3;
-    change_player_color(&player, 3);
-    set_player_color(&player);
+    change_player_color(3);
+    set_player_color();
 }  

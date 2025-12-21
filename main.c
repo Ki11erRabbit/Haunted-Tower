@@ -52,6 +52,8 @@ void main(void) {
       random_floor_color();
       reset_camera_state();
       initial_draw();
+      NEXT_PLAYER_COLOR(player);
+      set_player_color();
       DISPLAY_ON;
       break;
     }

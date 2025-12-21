@@ -59,14 +59,14 @@ void set_char_tiles(char_state_t *state, uint8_t *tiles);
 void init_player(void);
 
 
-void change_skin_tone(player_t *, uint8_t);
-void change_player_color(player_t *, uint8_t);
-void set_player_color(player_t *);
+void change_skin_tone(uint8_t);
+void change_player_color(uint8_t);
+void set_player_color();
 
-#define NEXT_PLAYER_COLOR(player) change_player_color(&player, player.color + 1)
-#define PREV_PLAYER_COLOR(player) change_player_color(&player, player.color - 1)
+#define NEXT_PLAYER_COLOR(player) change_player_color(player.color + 1)
+#define PREV_PLAYER_COLOR(player) change_player_color(player.color - 1)
 
-#define NEXT_PLAYER_SKIN_COLOR(player) change_skin_tone(&player, player.skin_tone + 1)
-#define PREV_PLAYER_SKIN_COLOR(player) change_skin_tone(&player, player.skin_tone - 1)
+#define NEXT_PLAYER_SKIN_COLOR(player) change_skin_tone(player.skin_tone + 1)
+#define PREV_PLAYER_SKIN_COLOR(player) change_skin_tone(player.skin_tone - 1)
 
 #endif
