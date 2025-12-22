@@ -345,7 +345,7 @@ void tick_character_for_movement(char_state_t *state) {
         --state->movement_ticks;
         if (state->movement_ticks == 0) {
             // If ticks is 0, then update the frame of the character
-            state->movement_frame = (state->movement_frame + 1) % MOVEMENT_OFFSET;
+            state->movement_frame = (state->movement_frame + 1) % MOVEMENT_FRAMES;
             
             state->movement_ticks = MOVEMENT_TICKS;
             update_sprite(state);
@@ -376,8 +376,8 @@ void init_player(void) {
     set_sprite_data(0, Wizard_TILE_COUNT, player.state.tiles);
     player.state.tile_offset = 0;
     player.state.body[0] = 0;
-    player.state.body[1] = 2;
-    player.state.body[2] = 1;
+    player.state.body[1] = 1;
+    player.state.body[2] = 2;
     player.state.body[3] = 3;
     player.state.movement_frame = 0;
     player.state.movement = CHAR_MOVING;

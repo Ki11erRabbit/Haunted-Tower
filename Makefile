@@ -23,7 +23,7 @@ $(OUTPATH)/characters/%.o: characters/%.c
 
 characters/%.c: assets/%.png
 	mkdir -p characters
-	png2asset $< -c $@ -sw 16 -sh 16 -spr8x16 -noflip
+	png2asset $< -c $@ -sw 16 -sh 16 -spr8x8 -noflip -keep_duplicate_tiles
 
 $(OUTPATH):
 	mkdir -p $(OUTPATH)/characters

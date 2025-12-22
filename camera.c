@@ -477,13 +477,26 @@ void update_sprite(char_state_t *character) {
     case CHAR_RIGHT:
         offset = SIDE_OFFSET;
         break;
+    }
+    uint8_t frame;
+    // for some reason the frames are exported out of the wrong order
+    // this corrects that ordering
+    if (character->movement_frame == 1) {
+        frame = 2;
+    } else if (character->movement_frame == 2) {
+        frame = 1;
+    } else if (character->movement_frame == 3) {
+        // This handles the case where we are on the last frame
+        frame = 2;
+    } else {
+        frame = character->movement_frame;
     }      
-
-    tl = character->tile_offset + offset + character->movement_frame * 4;
-    tr = character->tile_offset + offset + character->movement_frame * 4 + 2;
-    bl = character->tile_offset + offset + character->movement_frame * 4 + 1;
-    br = character->tile_offset + offset + character->movement_frame * 4 + 3;
-
+    
+    tl = character->tile_offset + offset + frame * 4;
+    tr = character->tile_offset + offset + frame * 4 + 1;
+    bl = character->tile_offset + offset + frame * 4 + 2;
+    br = character->tile_offset + offset + frame * 4 + 3;
+    
     set_sprite_tile(character->body[0], tl);
     set_sprite_tile(character->body[1], tr);
     set_sprite_tile(character->body[2], bl);

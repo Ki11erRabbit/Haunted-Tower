@@ -5,7 +5,7 @@
 #include <gbdk/metasprites.h>
 
 #define MOVEMENT_TICKS 10
-#define MOVEMENT_OFFSET 3
+#define MOVEMENT_FRAMES 4
 
 #define DOWN_OFFSET 0
 #define UP_OFFSET 12
