@@ -449,8 +449,8 @@ void draw_sprite(char_state_t *character) {
         return;
     }
 
-    uint16_t pixel_x = character->x_pixel;
-    uint16_t pixel_y = character->y_pixel;
+    uint16_t pixel_x = character->x_pixel + 8;
+    uint16_t pixel_y = character->y_pixel + 16;
 
     move_sprite(character->body[0], pixel_x, pixel_y);
     move_sprite(character->body[1], pixel_x + 8, pixel_y);
