@@ -1,7 +1,7 @@
 CC = lcc
 CFLAGS = -Wa-l -Wl-m -Wl-j -Wm-yC -DUSE_SFR_FOR_REG
 OUTPATH = output
-SOURCES = main.c noise.c sprites.c map.c camera.c character.c
+SOURCES = main.c noise.c sprites.c map.c camera.c character.c input.c player.c
 CHARACTER_PNGS = $(wildcard assets/*.png)
 CHARACTERS = $(patsubst assets/%.png,characters/%.c,$(CHARACTER_PNGS))
 CHARACTER_OBJECTS = $(patsubst characters/%.c,$(OUTPATH)/characters/%.o,$(CHARACTERS))

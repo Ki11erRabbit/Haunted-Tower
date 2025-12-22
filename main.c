@@ -34,9 +34,7 @@ void main(void) {
     wait_vbl_done();
     tick_characters_for_movement();
     update_input();
-    uint8_t joy = joypad();
-    switch (joy) {
-    case J_A:
+    if (is_button_just_pressed(BTN_A)) {
       DISPLAY_OFF;
       generate_floor();
       random_floor_color();
@@ -50,6 +48,5 @@ void main(void) {
     control_player();
     //scroll_camera(delta_x, delta_y);
     update_map_display();
-    vsync();
   }    
 }  

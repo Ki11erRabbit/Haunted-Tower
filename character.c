@@ -359,12 +359,12 @@ void move_character(char_state_t *state, int8_t dx, int8_t dy) {
     }
     uint8_t new_x = state->x;
     uint8_t new_y = state->y;
-    if (dx < 0) {
+    if (dx < 0 && new_x != 0) {
         new_x -= 1;
     } else if (dx > 0) {
         new_x += 1;
     }      
-    if (dy < 0) {
+    if (dy < 0 && new_y != 0) {
         new_y -= 1;
     } else if (dy > 0) {
         new_y += 1;
@@ -441,12 +441,14 @@ void tick_character_for_movement(char_state_t *state) {
 
 void tick_characters_for_movement(void) {
     tick_character_for_movement(&player.state);
-    for (char_t *character = (char_t *)characters; character < ((char_t*)characters) + MAX_NPC;
+    char_t **end_ptr = characters + MAX_NPC;
+    for (char_t **character = (char_t **)characters; character < end_ptr;
          character++) {
+        char_t *c = *character;
         if (character == 0) {
             continue;
         }        
-        tick_character_for_movement(&character->state);
+        tick_character_for_movement(&c->state);
     }      
 }
 

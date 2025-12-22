@@ -31,6 +31,7 @@ uint8_t get_button_mask(uint8_t button_index) {
 
 // Function to update input state for all buttons
 void update_input() {
+    joypad();
     uint8_t joy = joypad();
     input_state.current_joypad = joy;
     
