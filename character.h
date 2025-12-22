@@ -86,10 +86,6 @@ void set_char_tiles(char_state_t *state, uint8_t *tiles);
 void move_character(char_state_t *state, int8_t dx, int8_t dy);
 void turn_character(char_state_t *state, uint8_t direction);
 
-
-void init_player(void);
-
-
 void change_skin_tone(uint8_t);
 void change_player_color(uint8_t);
 void set_player_color();

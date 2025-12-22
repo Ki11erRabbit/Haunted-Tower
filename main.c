@@ -6,6 +6,8 @@
 #include "sprites.h"
 #include "camera.h"
 #include "character.h"
+#include "input.h"
+#include "player.h"
 
 void main(void) {
   initrand(DIV_REG + LY_REG);
@@ -31,22 +33,9 @@ void main(void) {
   for (;;) {
     wait_vbl_done();
     tick_characters_for_movement();
+    update_input();
     uint8_t joy = joypad();
-    int8_t delta_x = 0;
-    int8_t delta_y = 0;
     switch (joy) {
-    case J_UP:
-        delta_y = -1;
-        break;
-    case J_DOWN:
-        delta_y = 1;
-        break;
-    case J_LEFT:
-        delta_x = -1;
-        break;
-    case J_RIGHT:
-        delta_x = 1;
-        break;
     case J_A:
       DISPLAY_OFF;
       generate_floor();
@@ -58,8 +47,7 @@ void main(void) {
       DISPLAY_ON;
       break;
     }
-    move_character(&player.state, delta_x, delta_y);
-    draw_sprite(&player.state);
+    control_player();
     //scroll_camera(delta_x, delta_y);
     update_map_display();
     vsync();

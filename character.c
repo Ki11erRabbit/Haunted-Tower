@@ -1,3 +1,4 @@
+#include <gb/gb.h>
 #include <gbdk/platform.h>
 #include <gbdk/metasprites.h>
 #include "character.h"
@@ -425,6 +426,15 @@ void tick_character_for_movement(char_state_t *state) {
         }          
         break;
     case CHAR_TURNING:
+        --state->movement_ticks;
+        if (state->movement_ticks == 0) {
+            // If ticks is 0, then update the frame of the character
+            state->movement_frame = (state->movement_frame + 1) % 3;
+            
+            state->movement_ticks = MOVEMENT_TICKS;
+            update_sprite(state);
+            draw_sprite(state);
+        }          
         break;
     }      
 }  
@@ -441,25 +451,3 @@ void tick_characters_for_movement(void) {
 }
 
 
-void init_player(void) {
-    player.state.direction = CHAR_DOWN;
-    player.state.x = 4;
-    player.state.y = 4;
-    player.state.x_pixel = player.state.x * 16;
-    player.state.y_pixel = player.state.y * 16;
-    player.state.tiles = (uint8_t *)Wizard_tiles;
-    set_sprite_data(0, Wizard_TILE_COUNT, player.state.tiles);
-    player.state.tile_offset = 0;
-    player.state.body[0] = 0;
-    player.state.body[1] = 1;
-    player.state.body[2] = 2;
-    player.state.body[3] = 3;
-    player.state.movement_frame = 0;
-    player.state.movement = CHAR_MOVING;
-    player.state.movement_ticks = MOVEMENT_TICKS;
-    player.state.direction = CHAR_DOWN;
-    change_player_color(3);
-    set_player_color();
-    update_sprite(&player.state);
-    draw_sprite(&player.state);
-}  
