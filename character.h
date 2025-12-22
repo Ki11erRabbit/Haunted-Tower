@@ -31,13 +31,15 @@ typedef struct character_state {
     uint16_t x_pixel;
     uint16_t y_pixel;
     uint8_t direction;
+    uint8_t last_direction;
     uint8_t movement;
     uint8_t movement_ticks;
     uint8_t movement_frame;
+    uint8_t tile_offset;
     uint8_t *tiles;
     uint8_t body[4];
+    uint8_t turn_frame_offset[2];
     const palette_color_t *palette;
-    uint8_t tile_offset;
 } char_state_t;
 
 typedef struct player_character {
@@ -80,6 +82,10 @@ void change_char_direction(char_state_t *state, uint8_t direction);
 void change_char_position(char_state_t *state, uint8_t x, uint8_t y);
 
 void set_char_tiles(char_state_t *state, uint8_t *tiles);
+
+void move_character(char_state_t *state, int8_t dx, int8_t dy);
+void turn_character(char_state_t *state, uint8_t direction);
+
 
 void init_player(void);
 

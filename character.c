@@ -334,6 +334,78 @@ void set_char_tiles(char_state_t *state, uint8_t *tiles) {
     state->tiles = tiles;
 }
 
+void move_character(char_state_t *state, int8_t dx, int8_t dy) {
+    if (state->movement == CHAR_MOVING) {
+        uint16_t pixel_x = (uint16_t)state->x * 16;
+        uint16_t pixel_y = (uint16_t)state->y * 16;
+        if (state->x_pixel == pixel_x && state->y_pixel == pixel_y) {
+            state->movement = CHAR_STANDING;
+        } else {
+            int16_t delta_x = (int16_t)pixel_x - (int16_t)state->x_pixel;
+            int16_t delta_y = (int16_t)pixel_y - (int16_t)state->y_pixel;
+            if (delta_x < 0) {
+                state->x_pixel -= 1;
+            } else if (delta_x > 0) {
+                state->x_pixel += 1;
+            }              
+            if (delta_y < 0) {
+                state->y_pixel -= 1;
+            } else if (delta_y > 0) {
+                state->y_pixel += 1;
+            }
+        }          
+        return;
+    }
+    uint8_t new_x = state->x;
+    uint8_t new_y = state->y;
+    if (dx < 0) {
+        new_x -= 1;
+    } else if (dx > 0) {
+        new_x += 1;
+    }      
+    if (dy < 0) {
+        new_y -= 1;
+    } else if (dy > 0) {
+        new_y += 1;
+    }
+    state->x = new_x;
+    state->y = new_y;
+    state->movement = CHAR_MOVING;
+}
+
+void turn_character(char_state_t *state, uint8_t direction) {
+    if (state->movement == CHAR_TURNING && state->movement_frame == 2) {
+      state->movement = CHAR_STANDING;
+      return;
+    }
+    state->last_direction = state->direction;
+    state->direction = direction;
+    switch (state->last_direction) {
+    case CHAR_DOWN:
+        state->turn_frame_offset[0] = state->tile_offset + DOWN_OFFSET;
+        break;
+    case CHAR_UP:
+        state->turn_frame_offset[0] = state->tile_offset + UP_OFFSET;
+        break;
+    case CHAR_RIGHT:
+    case CHAR_LEFT:
+        state->turn_frame_offset[0] = state->tile_offset + SIDE_OFFSET;
+        break;
+    }      
+    switch (state->direction) {
+    case CHAR_DOWN:
+        state->turn_frame_offset[1] = state->tile_offset + DOWN_OFFSET;
+        break;
+    case CHAR_UP:
+        state->turn_frame_offset[1] = state->tile_offset + UP_OFFSET;
+        break;
+    case CHAR_RIGHT:
+    case CHAR_LEFT:
+        state->turn_frame_offset[1] = state->tile_offset + SIDE_OFFSET;
+        break;
+    }      
+}  
+
 void tick_character_for_movement(char_state_t *state) {
     switch (state->movement) {
     case CHAR_STANDING:
@@ -349,6 +421,7 @@ void tick_character_for_movement(char_state_t *state) {
             
             state->movement_ticks = MOVEMENT_TICKS;
             update_sprite(state);
+            draw_sprite(state);
         }          
         break;
     case CHAR_TURNING:
@@ -372,6 +445,8 @@ void init_player(void) {
     player.state.direction = CHAR_DOWN;
     player.state.x = 4;
     player.state.y = 4;
+    player.state.x_pixel = player.state.x * 16;
+    player.state.y_pixel = player.state.y * 16;
     player.state.tiles = (uint8_t *)Wizard_tiles;
     set_sprite_data(0, Wizard_TILE_COUNT, player.state.tiles);
     player.state.tile_offset = 0;

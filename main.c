@@ -58,7 +58,9 @@ void main(void) {
       DISPLAY_ON;
       break;
     }
-    scroll_camera(delta_x, delta_y);
+    move_character(&player.state, delta_x, delta_y);
+    draw_sprite(&player.state);
+    //scroll_camera(delta_x, delta_y);
     update_map_display();
     vsync();
   }    

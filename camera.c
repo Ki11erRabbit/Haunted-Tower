@@ -449,8 +449,8 @@ void draw_sprite(char_state_t *character) {
         return;
     }
 
-    uint16_t pixel_x = character->x * 16;
-    uint16_t pixel_y = character->y * 16;
+    uint16_t pixel_x = character->x_pixel;
+    uint16_t pixel_y = character->y_pixel;
 
     move_sprite(character->body[0], pixel_x, pixel_y);
     move_sprite(character->body[1], pixel_x + 8, pixel_y);
@@ -463,47 +463,67 @@ void update_sprite(char_state_t *character) {
     
     uint8_t tl, tr, bl, br;
 
-    uint8_t offset;
-    switch (character->direction) {
-    case CHAR_DOWN:
-        offset = DOWN_OFFSET;
-        break;
-    case CHAR_UP:
-        offset = UP_OFFSET;
-        break;
-    case CHAR_LEFT:
-        offset = SIDE_OFFSET;
-        break;
-    case CHAR_RIGHT:
-        offset = SIDE_OFFSET;
-        break;
-    }
-    uint8_t frame;
-    if (character->movement_frame == 3) {
-        // This handles the case where we are on the last frame
-        frame = 1;
-    } else {
-        frame = character->movement_frame;
-    }
-    if (character->direction == CHAR_RIGHT) {
-        tr = character->tile_offset + offset + frame * 4;
-        tl = character->tile_offset + offset + frame * 4 + 1;
-        br = character->tile_offset + offset + frame * 4 + 2;
-        bl = character->tile_offset + offset + frame * 4 + 3;
-    } else {
-        tl = character->tile_offset + offset + frame * 4;
-        tr = character->tile_offset + offset + frame * 4 + 1;
-        bl = character->tile_offset + offset + frame * 4 + 2;
-        br = character->tile_offset + offset + frame * 4 + 3;
-    }      
-    
+    if (character->movement == CHAR_MOVING) {
+        uint8_t offset;
+        switch (character->direction) {
+        case CHAR_DOWN:
+            offset = DOWN_OFFSET;
+            break;
+        case CHAR_UP:
+            offset = UP_OFFSET;
+            break;
+        case CHAR_LEFT:
+            offset = SIDE_OFFSET;
+            break;
+        case CHAR_RIGHT:
+            offset = SIDE_OFFSET;
+            break;
+        }
+        uint8_t frame;
+        if (character->movement_frame == 3) {
+            // This handles the case where we are on the last frame
+            frame = 1;
+        } else {
+            frame = character->movement_frame;
+        }
+        if (character->direction == CHAR_RIGHT) {
+            tr = character->tile_offset + offset + frame * 4;
+            tl = character->tile_offset + offset + frame * 4 + 1;
+            br = character->tile_offset + offset + frame * 4 + 2;
+            bl = character->tile_offset + offset + frame * 4 + 3;
+        } else {
+            tl = character->tile_offset + offset + frame * 4;
+            tr = character->tile_offset + offset + frame * 4 + 1;
+            bl = character->tile_offset + offset + frame * 4 + 2;
+            br = character->tile_offset + offset + frame * 4 + 3;
+        }
+    } else if (character->movement == CHAR_TURNING) {
+        if ((character->direction == CHAR_RIGHT && character->movement_frame == 1) || (character->last_direction == CHAR_RIGHT && character->movement_frame == 0)) {
+            tr = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4;
+            tl = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 1;
+            br = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 2;
+            bl = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 3;
+        } else {
+            tl = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4;
+            tr = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 1;
+            bl = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 2;
+            br = character->tile_offset + character->turn_frame_offset[character->movement_frame] * 4 + 3;
+        }
+    }                                          
     
     set_sprite_tile(character->body[0], tl);
     set_sprite_tile(character->body[1], tr);
     set_sprite_tile(character->body[2], bl);
     set_sprite_tile(character->body[3], br);
 
-    if (character->direction == CHAR_RIGHT) {
+    if ((character->direction == CHAR_RIGHT &&
+         character->movement == CHAR_MOVING) ||
+        (character->movement == CHAR_TURNING &&
+         character->direction == CHAR_RIGHT &&
+         character->movement_frame == 1) ||
+        (character->movement == CHAR_TURNING &&
+         character->last_direction == CHAR_RIGHT &&
+         character->movement_frame == 2)) {
         set_sprite_prop(character->body[0], S_FLIPX);
         set_sprite_prop(character->body[1], S_FLIPX);
         set_sprite_prop(character->body[2], S_FLIPX);
