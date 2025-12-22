@@ -22,6 +22,7 @@ void main(void) {
   SHOW_BKG;
 
   init_player();
+  tick_character_for_movement(&player.state);
   SHOW_SPRITES;
   
   DISPLAY_ON;

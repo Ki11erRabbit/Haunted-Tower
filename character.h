@@ -73,6 +73,7 @@ extern player_t player;
 
 
 void tick_characters_for_movement(void);
+void tick_character_for_movement(char_state_t *);
 
 void change_char_direction(char_state_t *state, uint8_t direction); 
 

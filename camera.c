@@ -479,26 +479,39 @@ void update_sprite(char_state_t *character) {
         break;
     }
     uint8_t frame;
-    // for some reason the frames are exported out of the wrong order
-    // this corrects that ordering
-    if (character->movement_frame == 1) {
-        frame = 2;
-    } else if (character->movement_frame == 2) {
-        frame = 1;
-    } else if (character->movement_frame == 3) {
+    if (character->movement_frame == 3) {
         // This handles the case where we are on the last frame
-        frame = 2;
+        frame = 1;
     } else {
         frame = character->movement_frame;
+    }
+    if (character->direction == CHAR_RIGHT) {
+        tr = character->tile_offset + offset + frame * 4;
+        tl = character->tile_offset + offset + frame * 4 + 1;
+        br = character->tile_offset + offset + frame * 4 + 2;
+        bl = character->tile_offset + offset + frame * 4 + 3;
+    } else {
+        tl = character->tile_offset + offset + frame * 4;
+        tr = character->tile_offset + offset + frame * 4 + 1;
+        bl = character->tile_offset + offset + frame * 4 + 2;
+        br = character->tile_offset + offset + frame * 4 + 3;
     }      
     
-    tl = character->tile_offset + offset + frame * 4;
-    tr = character->tile_offset + offset + frame * 4 + 1;
-    bl = character->tile_offset + offset + frame * 4 + 2;
-    br = character->tile_offset + offset + frame * 4 + 3;
     
     set_sprite_tile(character->body[0], tl);
     set_sprite_tile(character->body[1], tr);
     set_sprite_tile(character->body[2], bl);
     set_sprite_tile(character->body[3], br);
+
+    if (character->direction == CHAR_RIGHT) {
+        set_sprite_prop(character->body[0], S_FLIPX);
+        set_sprite_prop(character->body[1], S_FLIPX);
+        set_sprite_prop(character->body[2], S_FLIPX);
+        set_sprite_prop(character->body[3], S_FLIPX);
+    } else {
+        set_sprite_prop(character->body[0], 0);
+        set_sprite_prop(character->body[1], 0);
+        set_sprite_prop(character->body[2], 0);
+        set_sprite_prop(character->body[3], 0);
+    }      
 }
