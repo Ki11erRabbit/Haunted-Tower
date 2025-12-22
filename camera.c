@@ -434,11 +434,18 @@ void update_map_display(void) {
 
 
 void draw_sprite(char_state_t *character) {
-    wait_vbl_done();
     if (!(character->x >= camera.x && character->x <= (camera.x + TILE_WIDTH))) {
+        move_sprite(character->body[0], 0, 0);
+        move_sprite(character->body[1], 0, 0);
+        move_sprite(character->body[2], 0, 0);
+        move_sprite(character->body[3], 0, 0);
         return;
     }    
     if (!(character->y >= camera.y && character->y <= (camera.y + TILE_HEIGHT))) {
+        move_sprite(character->body[0], 0, 0);
+        move_sprite(character->body[1], 0, 0);
+        move_sprite(character->body[2], 0, 0);
+        move_sprite(character->body[3], 0, 0);
         return;
     }
 
@@ -449,4 +456,36 @@ void draw_sprite(char_state_t *character) {
     move_sprite(character->body[1], pixel_x + 8, pixel_y);
     move_sprite(character->body[2], pixel_x, pixel_y + 8);
     move_sprite(character->body[3], pixel_x + 8, pixel_y + 8);
-}  
+}
+
+
+void update_sprite(char_state_t *character) {
+    
+    uint8_t tl, tr, bl, br;
+
+    uint8_t offset;
+    switch (character->direction) {
+    case CHAR_DOWN:
+        offset = DOWN_OFFSET;
+        break;
+    case CHAR_UP:
+        offset = UP_OFFSET;
+        break;
+    case CHAR_LEFT:
+        offset = SIDE_OFFSET;
+        break;
+    case CHAR_RIGHT:
+        offset = SIDE_OFFSET;
+        break;
+    }      
+
+    tl = character->tile_offset + offset + character->movement_frame * 4;
+    tr = character->tile_offset + offset + character->movement_frame * 4 + 2;
+    bl = character->tile_offset + offset + character->movement_frame * 4 + 1;
+    br = character->tile_offset + offset + character->movement_frame * 4 + 3;
+
+    set_sprite_tile(character->body[0], tl);
+    set_sprite_tile(character->body[1], tr);
+    set_sprite_tile(character->body[2], bl);
+    set_sprite_tile(character->body[3], br);
+}

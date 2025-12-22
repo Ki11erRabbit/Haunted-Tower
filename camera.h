@@ -63,5 +63,6 @@ void set_camera_grid_position(uint8_t grid_x, uint8_t grid_y);
 void reset_camera_state(void);
 
 void draw_sprite(char_state_t*);
+void update_sprite(char_state_t*);
 
 #endif

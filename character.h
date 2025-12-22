@@ -4,8 +4,13 @@
 #include <gbdk/platform.h>
 #include <gbdk/metasprites.h>
 
-#define MOVEMENT_TICKS 200
+#define MOVEMENT_TICKS 10
 #define MOVEMENT_OFFSET 3
+
+#define DOWN_OFFSET 0
+#define UP_OFFSET 12
+#define SIDE_OFFSET 24
+
 
 typedef enum character_direction {
     CHAR_UP,
@@ -32,8 +37,7 @@ typedef struct character_state {
     uint8_t *tiles;
     uint8_t body[4];
     const palette_color_t *palette;
-    uint8_t sprite_movement_offset[MOVEMENT_OFFSET];
-    uint8_t sprite_index_offset;
+    uint8_t tile_offset;
 } char_state_t;
 
 typedef struct player_character {
@@ -59,10 +63,12 @@ typedef struct character {
     } character;   
 } char_t;
 
-extern monster_t monsters[5];
-extern entity_t entities[5];
+#define MAX_NPC 5
+
+extern monster_t monsters[MAX_NPC];
+extern entity_t entities[MAX_NPC];
 // Represents all slots for monsters, chests, and keys
-extern char_t *characters[5];
+extern char_t *characters[MAX_NPC];
 extern player_t player;
 
 
