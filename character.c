@@ -445,7 +445,7 @@ void tick_characters_for_movement(void) {
     for (char_t **character = (char_t **)characters; character < end_ptr;
          character++) {
         char_t *c = *character;
-        if (character == 0) {
+        if (c == 0) {
             continue;
         }        
         tick_character_for_movement(&c->state);
