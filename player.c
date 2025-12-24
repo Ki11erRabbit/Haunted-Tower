@@ -53,6 +53,7 @@ void control_player(void) {
         break;
     }
     
-    move_character(&player.state, delta_x, delta_y);
+    scroll_camera(delta_x, delta_y);
+    //move_character(&player.state, delta_x, delta_y);
     draw_sprite(&player.state);
 }  

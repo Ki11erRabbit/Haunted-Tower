@@ -16,7 +16,7 @@ void main(void) {
   set_default_palette();
   random_floor_color();
 
-  set_bkg_data(0, 18, BackgroundTiles);
+  set_bkg_data(0, 19, BackgroundTiles);
  
   generate_floor();
   // draw_floor();
@@ -38,12 +38,10 @@ void main(void) {
       DISPLAY_OFF;
       generate_floor();
       random_floor_color();
-      reset_camera_state();
-      initial_draw();
+      request_map_redraw();
       NEXT_PLAYER_COLOR(player);
       set_player_color();
       DISPLAY_ON;
-      break;
     }
     control_player();
     //scroll_camera(delta_x, delta_y);

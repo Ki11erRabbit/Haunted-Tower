@@ -22,7 +22,7 @@
 #define BACK_LOCKED_EXIT_UR 15u
 #define BACK_LOCKED_EXIT_LL 16u
 #define BACK_LOCKED_EXIT_LR 17u
-#define BACK_VOID 21u
+#define BACK_VOID 18u
 
 #define TILE_WIDTH 20u
 #define TILE_HEIGHT 18u
@@ -63,6 +63,11 @@ void set_camera_grid_position(uint8_t grid_x, uint8_t grid_y);
 void reset_camera_state(void);
 
 void draw_sprite(char_state_t*);
-void update_sprite(char_state_t*);
+void update_sprite(char_state_t *);
+
+void force_map_redraw(void);
+
+
+void request_map_redraw(void);
 
 #endif
